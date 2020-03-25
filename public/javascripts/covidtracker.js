@@ -56,7 +56,7 @@ function getLocation(entry) {
 //
 function getColor(intensity) {
 	let scale = ["63,177,159", "244,190,44", "241,121,84", "192,69,116"]
-	return "rgba(" + scale[Math.min(scale.length-1, Math.floor(intensity/1000))] + "," + (intensity/100)  +")"
+	return "rgba(" + scale[Math.min(scale.length-1, Math.floor(intensity/1000))] + "," + ((intensity > 2 ? 0.5 : 0) + intensity/100)  +")"
 }
 
 //
@@ -126,10 +126,10 @@ $(document ).ready(function() {
 
 		for (var i=1; i<confirmedCounts[location].length; i++) {
 			var confirmed = (confirmedCounts[location][i] - confirmedCounts[location][i-1])
-			var dim = Math.min(1+confirmed/100,8) + "px"
+			var radius = Math.min(Math.ceil(1+confirmed/50),8) + "px"
 
 			var entry = $("<div>").addClass("grid-entry").attr("index",i)
-			entry.css({"width": dim, "height": dim, "background-color": getColor(confirmed)})
+			entry.css({"width": radius, "height": radius, "background-color": getColor(confirmed)})
 
 			// row entry hover
 			entry.hover(function() { 		// mouseover
@@ -146,16 +146,22 @@ $(document ).ready(function() {
 
 
 		var lastVal = confirmedCounts[location].slice(-1)
-		var entry = $("<div>" + location + " (" + lastVal.toLocaleString() + ")</div>").addClass("row-label").attr("location",location).css({"color": getColor(lastVal)})
+		var color = getColor(lastVal)
+		var entry = $("<div>" + location + " (" + lastVal.toLocaleString() + ")</div>")
+						.addClass("row-label")
+						.attr({"location": location, "color": color})
+						.css({"color": color})
 
 
 		// row label hover
 		entry.hover(function() { 
 			let l =  $(this).attr("location")
 			let lastCount = confirmedCounts[l].slice(-1)
+			var delta = confirmedCounts[l].slice(-1) - confirmedCounts[l].slice(-2)[0]
 			$("#metadata-container").empty()
-			$("#metadata-container").append("<h2>" + l + "</h2>")
-									.append("<h4><b>" + confirmedCounts[l].slice(-1).toLocaleString() + "</b> cases confirmed</h4>")
+			$("#metadata-container").append($("<h2>").text(l).css("color", $(this).attr("color")))
+									.append("<h4><b>" + confirmedCounts[l].slice(-1).toLocaleString() + "</b> cases confirmed</h4>")				
+									.append($("<h5>").html("<b>" + ((delta > 0) ? "+" : "-") + " " + delta.toLocaleString() + "</b> new case" + ((delta > 1) ? "s" : "")).css("color", $(this).attr("color")))
 									.append("<h4><b>" + deathCounts[l].slice(-1).toLocaleString() + "</b> deaths</h4>")
 									.append("<h4><b>" + recoveredCounts[l].slice(-1).toLocaleString() + "</b> recovered</h4>")
 		})

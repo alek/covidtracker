@@ -85,6 +85,10 @@ b {
 	line-height: 21px;
 }
 
+#metadata-container h5 {
+	font-size: 8px;	
+}
+
 #grid {
     margin-top: 50px;
     margin-left: 50px;
@@ -110,7 +114,7 @@ b {
 .row-label {
 	font-size: 10px;
 	margin-left: 10px;
-	font-weight: 300;
+	font-weight: 400;
 }
 
 .row-label:hover {
@@ -130,13 +134,12 @@ b {
 
 #title-container {
 	width: 60%;
+	color: #B4B5B6;
 }
 
 #title-container a {
 	text-decoration: none;
 	color: #fff;
-	/*font-weight: 500;*/
-	color: #B4B5B6;
 }
 
 #nav-links {
