@@ -52,24 +52,21 @@ body {
     margin-top: 50px;
     margin-left: 50px;
     display: grid;
-    grid-gap: 5px;
-    /*grid-template-columns: 80px repeat(25, 15px);*/
-    grid-template-columns: repeat(32, 10px);
-    grid-auto-rows: 10px;
-    margin-right: 30%;
+    grid-gap: 4px;
+    align-items: center;
 }
 
 .grid-entry {
-	/*border-radius: 2px;*/
-    border-radius: 10%;
-	/*border-radius: 50%;*/
-    text-align: center;
-    background-color: #e7a5a3;
     cursor: pointer;
-    width: 10px;
-    height: 10px;
     display: inline-block;
     border-radius: 50%;
+    margin: auto;
+}
+
+#grid .row-label {
+	font-size: 10px;
+	margin-left: 10px;
+	font-weight: 300;
 }
 
 #header {
