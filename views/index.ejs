@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <title>Covid Timeline Tracker</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500&display=swap" rel="stylesheet"> 
+    <link rel='stylesheet' href='/stylesheets/style.css' />    
+    <script src="/javascripts/jquery-3.1.1.min.js"></script>
+    <script src='/javascripts/pantone.js' /></script>
+    <script src='/javascripts/svg.js' /></script>
+    <script src='/javascripts/covid-data.js' /></script>
+    <script src='/javascripts/covidtracker.js' /></script>
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    <div id="header">
+      <h1>COVID-19 Daily New Cases</h1>
+      <h2>Based on the Johns Hopkins CSSE Data Repository</h2>
+    </div>
   </body>
 </html>
