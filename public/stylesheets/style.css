@@ -58,7 +58,14 @@ body {
 }
 
 #metadata-container {
-	margin-top: 30px;
+	/*margin-top: 30px;*/
+	height: 20vh;
+	position: fixed;
+	bottom: 0%;
+	width: 30%;
+	padding-left: 50px;
+	/*background-color: red;*/
+	opacity: 1;
 }
 
 #metadata-container h2 {
