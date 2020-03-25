@@ -54,9 +54,14 @@ function getLocation(entry) {
 //
 // get color corresponding to the given intensity value
 //
-function getColor(intensity) {
+function getColor(intensity, forceVisible) {
 	let scale = ["63,177,159", "244,190,44", "241,121,84", "192,69,116"]
-	return "rgba(" + scale[Math.min(scale.length-1, Math.floor(intensity/1000))] + "," + ((intensity > 2 ? 0.5 : 0) + intensity/100)  +")"
+	var color = scale[Math.min(scale.length-1, Math.floor(intensity/1000))]
+	var opacity = ((intensity > 2 ? 0.5 : 0) + intensity/100)
+	if (opacity < 0.1 && forceVisible) {
+		opacity = 0.5
+	}
+	return "rgba(" + color + "," + opacity  +")"
 }
 
 //
@@ -69,7 +74,6 @@ $(document ).ready(function() {
 
 	// add the container grid
 
-	// var cellSize = window.innerWidth/(data.length*2.5)
 	var cellIncrement = 80/(data.length*1.4)
 	var cellSize = (cellIncrement/100)*window.innerWidth
 	
@@ -146,7 +150,7 @@ $(document ).ready(function() {
 
 
 		var lastVal = confirmedCounts[location].slice(-1)
-		var color = getColor(lastVal)
+		var color = getColor(lastVal, true)
 		var entry = $("<div>" + location + " (" + lastVal.toLocaleString() + ")</div>")
 						.addClass("row-label")
 						.attr({"location": location, "color": color})
