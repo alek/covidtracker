@@ -56,7 +56,7 @@ function getLocation(entry) {
 //
 function getColor(intensity) {
 	let scale = ["63,177,159", "244,190,44", "241,121,84", "192,69,116"]
-	return "rgba(" + scale[Math.min(scale.length-1, Math.floor(intensity/1000))] + "," + (0.2 + intensity/100)  +")"
+	return "rgba(" + scale[Math.min(scale.length-1, Math.floor(intensity/1000))] + "," + (intensity/100)  +")"
 }
 
 //
@@ -70,7 +70,7 @@ $(document ).ready(function() {
 	// add the container grid
 
 	// var cellSize = window.innerWidth/(data.length*2.5)
-	var cellIncrement = 80/(data.length*1.2)
+	var cellIncrement = 80/(data.length*1.4)
 	var cellSize = (cellIncrement/100)*window.innerWidth
 	
 	var grid = $("<div>").attr('id', 'grid')
@@ -108,26 +108,48 @@ $(document ).ready(function() {
 		}
 	}
 
+	// render dates
+	for (var i=1; i<data.length; i++) {
+		var entry = $("<div>").addClass("grid-header").attr("id", "header-" + i)
+		entry.text(data[i]['date'].split("-").slice(0,2).join(" "))		
+		$("#grid").append(entry)
+	}
+
+	$("#grid").append($("<div>"))	// padding
+
 	// render grid
 
 	var rendered = 0	
 	for (location in confirmedCounts) {
-		if (rendered++ > 100) {
-			break
-		}
+		
+		if (rendered++ > 100) { break } // TODO: add proper pagination
+
 		for (var i=1; i<confirmedCounts[location].length; i++) {
-			// var confirmed = gridCounts[location][i]
 			var confirmed = (confirmedCounts[location][i] - confirmedCounts[location][i-1])
 			var dim = Math.min(1+confirmed/100,8) + "px"
 
-			var entry = $("<div>").addClass("grid-entry")
+			var entry = $("<div>").addClass("grid-entry").attr("index",i)
 			entry.css({"width": dim, "height": dim, "background-color": getColor(confirmed)})
+
+			// row entry hover
+			entry.hover(function() { 		// mouseover
+				let idx = $(this).attr("index")
+				$("#header-" + idx).css({"color": "#fff"})
+			},function() { 					// mouseout
+				let idx = $(this).attr("index")
+				$("#header-" + idx).css({"color": "rgba(255,255,255,0.4)"})
+			})
+
 			$("#grid").append(entry)
 			lastConfirmed = confirmed
 		}
+
+
 		var lastVal = confirmedCounts[location].slice(-1)
 		var entry = $("<div>" + location + " (" + lastVal.toLocaleString() + ")</div>").addClass("row-label").attr("location",location).css({"color": getColor(lastVal)})
 
+
+		// row label hover
 		entry.hover(function() { 
 			let l =  $(this).attr("location")
 			let lastCount = confirmedCounts[l].slice(-1)

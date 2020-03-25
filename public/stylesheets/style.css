@@ -46,6 +46,7 @@ body {
 	font-family: 'Roboto', sans-serif;
 	background: #16120F;
 	color: #fff;
+	overflow: auto;
 }
 
 #main {
@@ -83,6 +84,13 @@ b {
     display: grid;
     grid-gap: 4px;
     align-items: center;
+}
+
+.grid-header {
+	font-size: 8px;
+	line-height: 10px;
+	margin-bottom: 15px;
+	color: rgba(255,255,255,0.4);
 }
 
 .grid-entry {
