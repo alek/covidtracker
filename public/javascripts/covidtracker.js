@@ -128,7 +128,7 @@ function renderGrid(data, counts) {
 	var rendered = 0	
 	for (var location in counts[renderVariable]) {
 		
-		if (rendered++ > 100) { break } // TODO: add proper pagination
+		if (rendered++ > 1000) { break } // TODO: add proper pagination
 
 		for (var i=1; i<counts[renderVariable][location].length; i++) {
 
