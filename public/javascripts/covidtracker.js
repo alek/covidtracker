@@ -50,10 +50,10 @@ function normalize(entry) {
 }
 
 //
-// get location for a given entry
-// (warning: CSSE data is messy/inconsistent - hacks are needed)
+// patch up records based on inconsistencies
+// occuring in the data over time
 //
-function getLocation(entry, key) {
+function cleanLocation(entry) {
 
 	// march 23 format change hack
 	if (entry['Country_Region']) {		
@@ -64,8 +64,7 @@ function getLocation(entry, key) {
 		entry['Province/State'] = entry['Province_State']
 	}
 
-	// more hacks / no politics
-
+	// consistency hacks / no politics
 	if (entry['Province/State'] == "Hong Kong") {
 		entry['Country/Region'] = "Hong Kong"
 	}
@@ -73,16 +72,28 @@ function getLocation(entry, key) {
 		entry['Country/Region'] = "Macau"
 	}
 
+	return entry
+
+}
+
+
+//
+// get location for a given entry
+// (warning: CSSE data is messy/inconsistent - hacks are needed)
+//
+function getLocation(entry, key) {
+	entry = cleanLocation(entry)
 	return normalize(entry[key])
 }
+
 
 //
 // get color corresponding to the given intensity value
 //
 function getColor(intensity, forceVisible) {
 	let scale = ["63,177,159", "244,190,44", "241,121,84", "192,69,116"]
-	var color = scale[Math.min(scale.length-1, Math.floor(intensity/1000))]
-	var opacity = ((intensity > 2 ? 0.5 : 0) + intensity/100)
+	let color = scale[Math.min(scale.length-1, Math.floor(intensity/1000))]
+	let opacity = ((intensity > 2 ? 0.5 : 0) + intensity/100)
 	if (opacity < 0.1 && forceVisible) {
 		opacity = 0.5
 	}
@@ -107,7 +118,7 @@ function renderMetadata(location, confirmed, deaths, recovered, date, delta, col
 // get total count for a given index value
 //
 function getCount(dict, index) {
-	var result = 0
+	let result = 0
 	for (key in dict) {
 		result += dict[key][index]
 	}
@@ -125,24 +136,24 @@ function renderGrid(data, counts, start, end) {
 	$("#grid").empty() 	// clear any existing grid
 
 	// render dates
-	for (var i=1; i<data.length; i++) {
-		var entry = $("<div>").addClass("grid-header").attr("id", "header-" + i)
+	for (let i=1; i<data.length; i++) {
+		let entry = $("<div>").addClass("grid-header").attr("id", "header-" + i)
 		entry.text(data[i]['date'].split("-").slice(0,2).join(" "))		
 		$("#grid").append(entry)
 	}
 
 	$("#grid").append($("<div>"))	// padding
 
-	var rendered = 0	
-	for (var location in counts[renderVariable]) {
+	let rendered = 0	
+	for (let location in counts[renderVariable]) {
 		
 		if (rendered++ > end) { break } // TODO: add proper pagination
 		if (rendered < start) { continue }
 
-		for (var i=1; i<counts[renderVariable][location].length; i++) {
+		for (let i=1; i<counts[renderVariable][location].length; i++) {
 
-			var metric = null
-			var radius = null
+			let metric = null
+			let radius = null
 
 			switch(renderType) {
 				case renderConfig.TYPE.DELTA:
@@ -154,7 +165,7 @@ function renderGrid(data, counts, start, end) {
 
 			radius = Math.min(Math.ceil(1+metric/50),8) + "px"
 
-			var entry = $("<div>").addClass("grid-entry").attr("index",i).attr("location",location)
+			let entry = $("<div>").addClass("grid-entry").attr("index",i).attr("location",location)
 			entry.css({"width": radius, "height": radius, "background-color": getColor(metric)})
 
 			// row entry hover
@@ -185,9 +196,9 @@ function renderGrid(data, counts, start, end) {
 		}
 
 
-		var lastVal = counts[renderVariable][location].slice(-1)
-		var color = getColor(lastVal, true)
-		var entry = $("<div>" + location + " (" + lastVal.toLocaleString() + ")</div>")
+		let lastVal = counts[renderVariable][location].slice(-1)
+		let color = getColor(lastVal, true)
+		let entry = $("<div>" + location + " (" + lastVal.toLocaleString() + ")</div>")
 						.addClass("row-label")
 						.attr({"location": location, "color": color})
 						.css({"color": color})
@@ -197,7 +208,7 @@ function renderGrid(data, counts, start, end) {
 		entry.hover(function() { 
 			let l =  $(this).attr("location")
 			let lastCount = counts[renderVariable][l].slice(-1)
-			var delta = counts[renderVariable][l].slice(-1) - counts[renderVariable][l].slice(-2)[0]
+			let delta = counts[renderVariable][l].slice(-1) - counts[renderVariable][l].slice(-2)[0]
 			renderMetadata(l, counts, data.slice(-1)[0]["date"], delta, getColor(delta),data.length-1)
 
 			renderMetadata(l, 
@@ -213,8 +224,8 @@ function renderGrid(data, counts, start, end) {
 	}
 
 	// add worldwide stats
-	var delta = getCount(counts["Confirmed"], data.length-1) - getCount(counts["Confirmed"], data.length-2)
-	var index = data.length-1
+	let delta = getCount(counts["Confirmed"], data.length-1) - getCount(counts["Confirmed"], data.length-2)
+	let index = data.length-1
 
 	renderMetadata("Worldwide", 
 					getCount(counts["Confirmed"], index), 
@@ -230,31 +241,49 @@ function renderGrid(data, counts, start, end) {
 //
 $(document).ready(function() {
 	
-	var data = getCovidData()
-	var start = new Date()
+	let data = getCovidData()
+	let start = new Date()
+
+	let searchParams = new URLSearchParams(window.location.search)
+	let countryFilter = null
+
+	if (searchParams.has("country")) {
+		countryFilter = searchParams.get("country")
+	}
 
 	// init the container grid
 
-	var cellIncrement = 80/(data.length*1.3)
-	var cellSize = (cellIncrement/100)*window.innerWidth
+	let cellIncrement = 80/(data.length*1.3)
+	let cellSize = (cellIncrement/100)*window.innerWidth
 	
-	var grid = $("<div>").attr('id', 'grid')
+	let grid = $("<div>").attr('id', 'grid')
 	grid.css({"grid-template-columns": "repeat(" + (data.length-1) + ", "  + cellIncrement + "%) 20%"})
 	$("#grid-container").append(grid)
 
 	// aggregate counts per location
 
-	var counts = {
+	let counts = {
 		"Confirmed": {},
 		"Deaths": {},
 		"Recovered": {}
 	}
 
-	for (var i=0; i<data.length; i++) {
-		var date = data[i]['date']
-		var entries = data[i]['entries']
-		for (var j=0; j<entries.length; j++) {
-			var location = getLocation(entries[j], aggregateField)
+	for (let i=0; i<data.length; i++) {
+		let date = data[i]['date']
+		let entries = data[i]['entries']
+		for (let j=0; j<entries.length; j++) {
+
+			let location = getLocation(entries[j], aggregateField)
+
+			if (countryFilter) {
+				 if (getLocation(entries[j], renderConfig.FIELDS.COUNTRY) != countryFilter) {
+					continue	// not matching the requested country - skip
+				 } else {		// country selected - aggregate by state
+				 	location = getLocation(entries[j], renderConfig.FIELDS.STATE) 
+				 }
+				
+			}
+
 			if (exclusionList.includes(location)) {
 				continue
 			}
