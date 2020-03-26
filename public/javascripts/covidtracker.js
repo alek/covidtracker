@@ -25,12 +25,17 @@ const renderConfig = {
 		CONFIRMED: "Confirmed",
 		DEATHS: "Deaths",
 		RECOVERED: "Recovered"
-	}
+	},
+	FIELDS : {
+		COUNTRY: "Country/Region",
+		STATE: "Province/State"
+	}	
 }
 
 // load-time defaults
 var renderType = renderConfig.TYPE.DELTA
 var renderVariable = renderConfig.VARIABLE.CONFIRMED
+var aggregateField = renderConfig.FIELDS.COUNTRY
 
 //
 // normalize different representations 
@@ -48,7 +53,7 @@ function normalize(entry) {
 // get location for a given entry
 // (warning: CSSE data is messy/inconsistent - hacks are needed)
 //
-function getLocation(entry) {
+function getLocation(entry, key) {
 
 	// march 23 format change hack
 	if (entry['Country_Region']) {		
@@ -59,16 +64,16 @@ function getLocation(entry) {
 		entry['Province/State'] = entry['Province_State']
 	}
 
-	var location = entry['Country/Region']
+	// more hacks / no politics
 
 	if (entry['Province/State'] == "Hong Kong") {
-		location = "Hong Kong"
+		entry['Country/Region'] = "Hong Kong"
 	}
 	if (entry['Province/State'] == "Macau") {
-		location = "Macau"
+		entry['Country/Region'] = "Macau"
 	}
 
-	return normalize(location)
+	return normalize(entry[key])
 }
 
 //
@@ -249,7 +254,7 @@ $(document).ready(function() {
 		var date = data[i]['date']
 		var entries = data[i]['entries']
 		for (var j=0; j<entries.length; j++) {
-			var location = getLocation(entries[j])
+			var location = getLocation(entries[j], aggregateField)
 			if (exclusionList.includes(location)) {
 				continue
 			}
