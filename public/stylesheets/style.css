@@ -133,6 +133,7 @@ b {
 	/*font-size: 18px;*/
 }
 
+
 #header {
 	margin-left: 50px;
 	margin-top: 50px;
@@ -152,6 +153,14 @@ b {
 
 #nav-links {
 	display: flex;
+}
+
+.filter-selector {
+	cursor: pointer;
+}
+
+svg:hover {
+	fill: #f00;
 }
 
 #nav-links #type-label, #variable-label {

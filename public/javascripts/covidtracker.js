@@ -18,8 +18,8 @@ const countrySynonyms = {
 
 const renderConfig = {
 	TYPE: {
-		TOTAL: "Total Cases",
-		DELTA: "New Cases"
+		TOTAL: "Total",
+		DELTA: "New"
 	},
 	VARIABLE: {
 		CONFIRMED: "Confirmed",
@@ -268,7 +268,7 @@ $(document).ready(function() {
 		let avail = Object.values(renderConfig.VARIABLE)
 		renderVariable = avail[(avail.indexOf(renderVariable) + 1)%avail.length]
 		renderGrid(data, counts)
-		$("#variable-label").text(renderVariable)		
+		$("#variable-label").text(renderVariable.replace("Confirmed", "Cases"))		
 		$("#main-title").text("COVID-19 Daily " + renderType + " " + renderVariable)
 	})
 
