@@ -2,7 +2,7 @@
 // Interactive grid rendering of the JHU CSSE data
 //
 
-const exclusionList = ["Others"]
+const exclusionList = ["Others", "null"]
 
 const countrySynonyms = {
 	"Mainland China" : "China",
@@ -218,6 +218,11 @@ function renderGrid(data, counts, start, end) {
 							data.slice(-1)[0]["date"], 
 							delta,
 							getColor(delta))
+		})
+
+		// row label click
+		entry.click(function() {
+			window.location.href = "?country=" + $(this).attr("location");
 		})
 
 		$("#grid").append(entry)	
