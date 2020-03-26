@@ -70,7 +70,10 @@ body {
 
 #metadata-container h2 {
 	font-size: 18px;
-	line-height: 48px;
+	/*line-height: 48px;*/
+	margin-bottom: 12px;
+	margin-top: 6px;
+	color: #73706F;
 }
 
 b {
@@ -87,6 +90,12 @@ b {
 
 #metadata-container h5 {
 	font-size: 8px;	
+	margin-bottom: 8px;
+}
+
+#metadata-container h6 {
+	font-size: 10px;	
+	color: #73706F;
 }
 
 #grid {
@@ -121,7 +130,7 @@ b {
 	color: #fff;
 	cursor: pointer;
 	font-weight: 400;
-	font-size: 18px;
+	/*font-size: 18px;*/
 }
 
 #header {

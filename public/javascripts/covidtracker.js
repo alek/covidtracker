@@ -65,6 +65,17 @@ function getColor(intensity, forceVisible) {
 }
 
 //
+// get total count for a given index value
+//
+function getCount(dict, index) {
+	var result = 0
+	for (key in dict) {
+		result += dict[key][index]
+	}
+	return result
+}
+
+//
 // grid init etc.
 //
 $(document ).ready(function() {
@@ -163,15 +174,29 @@ $(document ).ready(function() {
 			let lastCount = confirmedCounts[l].slice(-1)
 			var delta = confirmedCounts[l].slice(-1) - confirmedCounts[l].slice(-2)[0]
 			$("#metadata-container").empty()
-			$("#metadata-container").append($("<h2>").text(l).css("color", $(this).attr("color")))
+			$("#metadata-container").append("<h6>" + data.slice(-1)[0]["date"] + "</h6>")				
+									.append($("<h2>").text(l).css("color", $(this).attr("color")))
 									.append("<h4><b>" + confirmedCounts[l].slice(-1).toLocaleString() + "</b> cases confirmed</h4>")				
 									.append($("<h5>").html("<b>" + ((delta > 0) ? "+" : "-") + " " + delta.toLocaleString() + "</b> new case" + ((delta > 1) ? "s" : "")).css("color", $(this).attr("color")))
 									.append("<h4><b>" + deathCounts[l].slice(-1).toLocaleString() + "</b> deaths</h4>")
 									.append("<h4><b>" + recoveredCounts[l].slice(-1).toLocaleString() + "</b> recovered</h4>")
 		})
 
-		$("#grid").append(entry)		
+		$("#grid").append(entry)	
 	}
+
+	// add worldwide stats on init
+
+	var delta = getCount(confirmedCounts, data.length-1) - getCount(confirmedCounts, data.length-2)
+	var color = getColor(delta)
+	$("#metadata-container").empty()
+	$("#metadata-container").append("<h6>" + data.slice(-1)[0]["date"] + "</h6>")				
+							.append($("<h2>").text("Worldwide").css("color", color))
+							.append("<h4><b>" + getCount(confirmedCounts, data.length-1).toLocaleString() + "</b> cases confirmed</h4>")				
+							.append($("<h5>").html("<b>" + ((delta > 0) ? "+" : "-") + " " + delta.toLocaleString() + "</b> new case" + ((delta > 1) ? "s" : "")).css("color", color))
+							.append("<h4><b>" + getCount(deathCounts, data.length-1).toLocaleString() + "</b> deaths</h4>")
+							.append("<h4><b>" + getCount(recoveredCounts, data.length-1).toLocaleString() + "</b> recovered</h4>")
+
 
 	// add the grid element
 
