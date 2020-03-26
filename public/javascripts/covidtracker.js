@@ -110,54 +110,11 @@ function getCount(dict, index) {
 }
 
 //
-// grid init, rendering, etc.
+// render main infographics grid
 //
-$(document ).ready(function() {
-	
-	var data = getCovidData()
-	var start = new Date()
+function renderGrid(data, counts) {
 
-	// init the container grid
-
-	var cellIncrement = 80/(data.length*1.3)
-	var cellSize = (cellIncrement/100)*window.innerWidth
-	
-	var grid = $("<div>").attr('id', 'grid')
-	grid.css({"grid-template-columns": "repeat(" + (data.length-1) + ", "  + cellIncrement + "%) 20%"})
-	$("#grid-container").append(grid)
-
-	// aggregate counts per location
-
-	var counts = {
-		"Confirmed": {},
-		"Deaths": {},
-		"Recovered": {}
-	}
-
-	for (var i=0; i<data.length; i++) {
-		var date = data[i]['date']
-		var entries = data[i]['entries']
-		for (var j=0; j<entries.length; j++) {
-			var location = getLocation(entries[j])
-			if (exclusionList.includes(location)) {
-				continue
-			}
-			if (!counts["Confirmed"][location]) {
-				counts["Confirmed"][location] = new Array(data.length).fill(0);
-				counts["Deaths"][location] = new Array(data.length).fill(0);
-				counts["Recovered"][location] = new Array(data.length).fill(0);
-			}
-			if (entries[j]["Confirmed"]) {
-				counts["Confirmed"][location][i] += parseInt(entries[j]["Confirmed"])
-			}
-			if (entries[j]["Deaths"]) {
-				counts["Deaths"][location][i] += parseInt(entries[j]["Deaths"])
-			}
-			if (entries[j]["Recovered"]) {
-				counts["Recovered"][location][i] += parseInt(entries[j]["Recovered"])
-			}
-		}
-	}
+	$("#grid").empty() 	// clear any existing grid
 
 	// render dates
 	for (var i=1; i<data.length; i++) {
@@ -168,10 +125,8 @@ $(document ).ready(function() {
 
 	$("#grid").append($("<div>"))	// padding
 
-	// render grid
-
 	var rendered = 0	
-	for (location in counts[renderVariable]) {
+	for (var location in counts[renderVariable]) {
 		
 		if (rendered++ > 100) { break } // TODO: add proper pagination
 
@@ -234,7 +189,7 @@ $(document ).ready(function() {
 		$("#grid").append(entry)	
 	}
 
-	// add worldwide stats on document load
+	// add worldwide stats
 	var delta = getCount(counts["Confirmed"], data.length-1) - getCount(counts["Confirmed"], data.length-2)
 	var index = data.length-1
 
@@ -244,14 +199,66 @@ $(document ).ready(function() {
 					getCount(counts["Recovered"], index),
 					data.slice(-1)[0]["date"], 
 					delta,
-					getColor(delta))
+					getColor(delta))	
+}
 
+//
+// grid init, rendering, etc.
+//
+$(document).ready(function() {
+	
+	var data = getCovidData()
+	var start = new Date()
+
+	// init the container grid
+
+	var cellIncrement = 80/(data.length*1.3)
+	var cellSize = (cellIncrement/100)*window.innerWidth
+	
+	var grid = $("<div>").attr('id', 'grid')
+	grid.css({"grid-template-columns": "repeat(" + (data.length-1) + ", "  + cellIncrement + "%) 20%"})
+	$("#grid-container").append(grid)
+
+	// aggregate counts per location
+
+	var counts = {
+		"Confirmed": {},
+		"Deaths": {},
+		"Recovered": {}
+	}
+
+	for (var i=0; i<data.length; i++) {
+		var date = data[i]['date']
+		var entries = data[i]['entries']
+		for (var j=0; j<entries.length; j++) {
+			var location = getLocation(entries[j])
+			if (exclusionList.includes(location)) {
+				continue
+			}
+			if (!counts["Confirmed"][location]) {
+				counts["Confirmed"][location] = new Array(data.length).fill(0);
+				counts["Deaths"][location] = new Array(data.length).fill(0);
+				counts["Recovered"][location] = new Array(data.length).fill(0);
+			}
+			if (entries[j]["Confirmed"]) {
+				counts["Confirmed"][location][i] += parseInt(entries[j]["Confirmed"])
+			}
+			if (entries[j]["Deaths"]) {
+				counts["Deaths"][location][i] += parseInt(entries[j]["Deaths"])
+			}
+			if (entries[j]["Recovered"]) {
+				counts["Recovered"][location][i] += parseInt(entries[j]["Recovered"])
+			}
+		}
+	}
+
+	// render the grid
+	renderGrid(data, counts)
 
 	// add filter toggles
 	$("#type-select").click(function() {
 		console.log("YO")
 	})
-
 
 	// add the grid element
 
