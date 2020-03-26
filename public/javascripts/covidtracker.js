@@ -265,9 +265,7 @@ $(document).ready(function() {
 
 	$("#variable-select").click(function() {
 		let avail = Object.values(renderConfig.VARIABLE)
-		console.log("BEFORE: " + renderVariable)
 		renderVariable = avail[(avail.indexOf(renderVariable) + 1)%avail.length]
-		console.log("AFTER: " + renderVariable)
 		renderGrid(data, counts)
 		$("#variable-label").text(renderVariable)		
 	})
