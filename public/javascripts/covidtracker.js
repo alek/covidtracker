@@ -2,7 +2,7 @@
 // Interactive grid rendering of the JHU CSSE data
 //
 
-const exclusionList = ["Others", "null"]
+const exclusionList = ["Others", "null", "undefined", "None"]
 
 const countrySynonyms = {
 	"Mainland China" : "China",
@@ -57,7 +57,7 @@ function cleanLocation(entry) {
 
 	// march 23 format change hack
 	if (entry['Country_Region']) {		
-		entry['Country/Region'] =entry['Country_Region']
+		entry['Country/Region'] = entry['Country_Region']
 	}
 
 	if (entry['Province_State']) {		
@@ -70,6 +70,11 @@ function cleanLocation(entry) {
 	}
 	if (entry['Province/State'] == "Macau") {
 		entry['Country/Region'] = "Macau"
+	}
+
+	// more hacks
+	if (!entry['Province/State'] || entry['Province/State'] === undefined) {
+		entry['Province/State'] = entry['Country/Region']
 	}
 
 	return entry
@@ -285,8 +290,9 @@ $(document).ready(function() {
 					continue	// not matching the requested country - skip
 				 } else {		// country selected - aggregate by state
 				 	location = getLocation(entries[j], renderConfig.FIELDS.STATE) 
+				 	// console.log(entries[j])
+				 	// console.log(location)
 				 }
-				
 			}
 
 			if (exclusionList.includes(location)) {
