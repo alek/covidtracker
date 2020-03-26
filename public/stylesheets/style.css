@@ -154,16 +154,22 @@ b {
 	display: flex;
 }
 
-#nav-links a {
+#nav-links #type-label, #variable-label {
 	text-decoration: none;
 	color: #808080;
 	text-transform: uppercase;
 	font-weight: 300;
 	font-size: 12px;
 	margin-right: 5px;
+	cursor: pointer;
+	display: inline-block;
 }
 
-#nav-links a:hover {
+#nav-links #type-label:hover {
+	color: #fff;
+}
+
+#nav-links #variable-label:hover {
 	color: #fff;
 }
 

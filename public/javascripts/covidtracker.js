@@ -257,7 +257,10 @@ $(document).ready(function() {
 
 	// add filter toggles
 	$("#type-select").click(function() {
-		console.log("YO")
+		let avail = Object.values(renderConfig.TYPE)
+		renderType = avail[(avail.indexOf(renderType) + 1)%avail.length]
+		renderGrid(data, counts)
+		$("#type-label").text(renderType)		
 	})
 
 	// add the grid element
