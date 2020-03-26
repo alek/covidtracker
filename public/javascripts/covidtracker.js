@@ -130,17 +130,17 @@ function renderGrid(data, counts) {
 		
 		if (rendered++ > 100) { break } // TODO: add proper pagination
 
-		for (var i=1; i<counts["Confirmed"][location].length; i++) {
+		for (var i=1; i<counts[renderVariable][location].length; i++) {
 
 			var metric = null
 			var radius = null
 
 			switch(renderType) {
 				case renderConfig.TYPE.DELTA:
-					metric = (counts["Confirmed"][location][i] - counts["Confirmed"][location][i-1])
+					metric = (counts[renderVariable][location][i] - counts[renderVariable][location][i-1])
 					break
 				case renderConfig.TYPE.TOTAL:
-					metric = counts["Confirmed"][location][i]
+					metric = counts[renderVariable][location][i]
 			}
 
 			radius = Math.min(Math.ceil(1+metric/50),8) + "px"
@@ -158,11 +158,10 @@ function renderGrid(data, counts) {
 			})
 
 			$("#grid").append(entry)
-			lastConfirmed = metric
 		}
 
 
-		var lastVal = counts["Confirmed"][location].slice(-1)
+		var lastVal = counts[renderVariable][location].slice(-1)
 		var color = getColor(lastVal, true)
 		var entry = $("<div>" + location + " (" + lastVal.toLocaleString() + ")</div>")
 						.addClass("row-label")
@@ -173,8 +172,8 @@ function renderGrid(data, counts) {
 		// row label hover
 		entry.hover(function() { 
 			let l =  $(this).attr("location")
-			let lastCount = counts["Confirmed"][l].slice(-1)
-			var delta = counts["Confirmed"][l].slice(-1) - counts["Confirmed"][l].slice(-2)[0]
+			let lastCount = counts[renderVariable][l].slice(-1)
+			var delta = counts[renderVariable][l].slice(-1) - counts[renderVariable][l].slice(-2)[0]
 			renderMetadata(l, counts, data.slice(-1)[0]["date"], delta, getColor(delta),data.length-1)
 
 			renderMetadata(l, 
@@ -256,11 +255,21 @@ $(document).ready(function() {
 	renderGrid(data, counts)
 
 	// add filter toggles
+
 	$("#type-select").click(function() {
 		let avail = Object.values(renderConfig.TYPE)
 		renderType = avail[(avail.indexOf(renderType) + 1)%avail.length]
 		renderGrid(data, counts)
 		$("#type-label").text(renderType)		
+	})
+
+	$("#variable-select").click(function() {
+		let avail = Object.values(renderConfig.VARIABLE)
+		console.log("BEFORE: " + renderVariable)
+		renderVariable = avail[(avail.indexOf(renderVariable) + 1)%avail.length]
+		console.log("AFTER: " + renderVariable)
+		renderGrid(data, counts)
+		$("#variable-label").text(renderVariable)		
 	})
 
 	// add the grid element
