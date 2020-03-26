@@ -141,7 +141,7 @@ b {
 }
 
 #title-container {
-	width: 60%;
+	width: 65%;
 	color: #B4B5B6;
 }
 
@@ -151,7 +151,7 @@ b {
 }
 
 #nav-links {
-	align-items: right;
+	display: flex;
 }
 
 #nav-links a {
@@ -160,7 +160,15 @@ b {
 	text-transform: uppercase;
 	font-weight: 300;
 	font-size: 12px;
-	margin-right: 40px;
+	margin-right: 5px;
+}
+
+#nav-links a:hover {
+	color: #fff;
+}
+
+#type-select {
+	margin-right: 30px;
 }
 
 #header h1 {
@@ -181,4 +189,17 @@ b {
 	/*width: 100%;*/
 	border-bottom: 1px solid rgba(255,255,255,0.3);
 	margin-bottom: 20px;
+}
+
+#legend {
+	margin-left: 50px;
+	margin: 50px;
+	width: 100%;
+}
+
+#legend h5 {
+	text-transform: uppercase;
+	color: #73706F;
+	letter-spacing: 1px;
+	font-size: 10px;
 }

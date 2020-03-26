@@ -1,6 +1,6 @@
-var exclusionList = ["Others"]
+const exclusionList = ["Others"]
 
-var countrySynonyms = {
+const countrySynonyms = {
 	"Mainland China" : "China",
 	"United Kingdom" : "UK",
 	"Korea, South" : "South Korea",
@@ -10,6 +10,18 @@ var countrySynonyms = {
 	"occupied Palestinian territory": "Israel",
 	"Viet Nam": "Vietnam",
 	"Russian Federation": "Russia"
+}
+
+const renderConfig = {
+	TYPE: {
+		TOTAL: "Total Cases",
+		DELTA: "New Cases"
+	},
+	VARIABLE: {
+		CONFIRMED: "Confirmed",
+		DEATHS: "Deaths",
+		RECOVERED: "Recovered"
+	}
 }
 
 //
@@ -76,16 +88,20 @@ function getCount(dict, index) {
 }
 
 //
-// grid init etc.
+// grid init, rendering, etc.
 //
 $(document ).ready(function() {
 	
 	var data = getCovidData()
 	var start = new Date()
 
-	// add the container grid
+	// todo: get from request
+	var renderType = renderConfig.TYPE.DELTA
+	var renderVariable = renderConfig.VARIABLE.CONFIRMED
 
-	var cellIncrement = 80/(data.length*1.4)
+	// init the container grid
+
+	var cellIncrement = 80/(data.length*1.3)
 	var cellSize = (cellIncrement/100)*window.innerWidth
 	
 	var grid = $("<div>").attr('id', 'grid')
@@ -140,11 +156,22 @@ $(document ).ready(function() {
 		if (rendered++ > 100) { break } // TODO: add proper pagination
 
 		for (var i=1; i<confirmedCounts[location].length; i++) {
-			var confirmed = (confirmedCounts[location][i] - confirmedCounts[location][i-1])
-			var radius = Math.min(Math.ceil(1+confirmed/50),8) + "px"
+
+			var metric = null
+			var radius = null
+
+			switch(renderType) {
+				case renderConfig.TYPE.DELTA:
+					metric = (confirmedCounts[location][i] - confirmedCounts[location][i-1])
+					break
+				case renderConfig.TYPE.TOTAL:
+					metric = confirmedCounts[location][i]
+			}
+
+			radius = Math.min(Math.ceil(1+metric/50),8) + "px"
 
 			var entry = $("<div>").addClass("grid-entry").attr("index",i)
-			entry.css({"width": radius, "height": radius, "background-color": getColor(confirmed)})
+			entry.css({"width": radius, "height": radius, "background-color": getColor(metric)})
 
 			// row entry hover
 			entry.hover(function() { 		// mouseover
@@ -156,7 +183,7 @@ $(document ).ready(function() {
 			})
 
 			$("#grid").append(entry)
-			lastConfirmed = confirmed
+			lastConfirmed = metric
 		}
 
 
@@ -196,6 +223,13 @@ $(document ).ready(function() {
 							.append($("<h5>").html("<b>" + ((delta > 0) ? "+" : "-") + " " + delta.toLocaleString() + "</b> new case" + ((delta > 1) ? "s" : "")).css("color", color))
 							.append("<h4><b>" + getCount(deathCounts, data.length-1).toLocaleString() + "</b> deaths</h4>")
 							.append("<h4><b>" + getCount(recoveredCounts, data.length-1).toLocaleString() + "</b> recovered</h4>")
+
+
+
+	// add filter toggles
+	$("#type-select").click(function() {
+		console.log("YO")
+	})
 
 
 	// add the grid element
