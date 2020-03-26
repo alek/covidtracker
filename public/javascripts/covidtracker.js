@@ -1,3 +1,7 @@
+//
+// Interactive grid rendering of the JHU CSSE data
+//
+
 const exclusionList = ["Others"]
 
 const countrySynonyms = {
@@ -23,6 +27,10 @@ const renderConfig = {
 		RECOVERED: "Recovered"
 	}
 }
+
+// load-time defaults
+var renderType = renderConfig.TYPE.DELTA
+var renderVariable = renderConfig.VARIABLE.CONFIRMED
 
 //
 // normalize different representations 
@@ -109,10 +117,6 @@ $(document ).ready(function() {
 	var data = getCovidData()
 	var start = new Date()
 
-	// todo: get from request
-	var renderType = renderConfig.TYPE.DELTA
-	var renderVariable = renderConfig.VARIABLE.CONFIRMED
-
 	// init the container grid
 
 	var cellIncrement = 80/(data.length*1.3)
@@ -167,7 +171,7 @@ $(document ).ready(function() {
 	// render grid
 
 	var rendered = 0	
-	for (location in counts["Confirmed"]) {
+	for (location in counts[renderVariable]) {
 		
 		if (rendered++ > 100) { break } // TODO: add proper pagination
 
@@ -230,7 +234,7 @@ $(document ).ready(function() {
 		$("#grid").append(entry)	
 	}
 
-	// add worldwide stats on init
+	// add worldwide stats on document load
 	var delta = getCount(counts["Confirmed"], data.length-1) - getCount(counts["Confirmed"], data.length-2)
 	var index = data.length-1
 
