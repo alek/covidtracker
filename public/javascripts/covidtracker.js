@@ -261,7 +261,7 @@ $(document).ready(function() {
 		renderType = avail[(avail.indexOf(renderType) + 1)%avail.length]
 		renderGrid(data, counts)
 		$("#type-label").text(renderType)		
-		$("#main-title").text("COVID-19 " + renderType + " " + renderVariable)
+		$("#main-title").text("COVID-19 Daily " + renderType + " " + renderVariable)
 	})
 
 	$("#variable-select").click(function() {
@@ -269,7 +269,7 @@ $(document).ready(function() {
 		renderVariable = avail[(avail.indexOf(renderVariable) + 1)%avail.length]
 		renderGrid(data, counts)
 		$("#variable-label").text(renderVariable)		
-		$("#main-title").text("COVID-19 " + renderType + " " + renderVariable)
+		$("#main-title").text("COVID-19 Daily " + renderType + " " + renderVariable)
 	})
 
 	// add the grid element
