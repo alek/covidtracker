@@ -112,7 +112,10 @@ function getCount(dict, index) {
 //
 // render main infographics grid
 //
-function renderGrid(data, counts) {
+function renderGrid(data, counts, start, end) {
+
+	if (!start) { start = 0 }
+	if (!end) { end = 100 }
 
 	$("#grid").empty() 	// clear any existing grid
 
@@ -128,7 +131,8 @@ function renderGrid(data, counts) {
 	var rendered = 0	
 	for (var location in counts[renderVariable]) {
 		
-		if (rendered++ > 1000) { break } // TODO: add proper pagination
+		if (rendered++ > end) { break } // TODO: add proper pagination
+		if (rendered < start) { continue }
 
 		for (var i=1; i<counts[renderVariable][location].length; i++) {
 
@@ -145,13 +149,28 @@ function renderGrid(data, counts) {
 
 			radius = Math.min(Math.ceil(1+metric/50),8) + "px"
 
-			var entry = $("<div>").addClass("grid-entry").attr("index",i)
+			var entry = $("<div>").addClass("grid-entry").attr("index",i).attr("location",location)
 			entry.css({"width": radius, "height": radius, "background-color": getColor(metric)})
 
 			// row entry hover
 			entry.hover(function() { 		// mouseover
 				let idx = $(this).attr("index")
+				let location = $(this).attr("location")
 				$("#header-" + idx).css({"color": "#fff"})
+
+				let delta = 0
+				if (idx > 0) {
+					delta = counts["Confirmed"][location][idx] - counts["Confirmed"][location][idx-1]
+				}
+
+				renderMetadata(location, 
+							counts["Confirmed"][location][idx], 
+							counts["Deaths"][location][idx],
+							counts["Recovered"][location][idx],
+							data[idx]["date"], 
+							delta,
+							getColor(delta))
+
 			},function() { 					// mouseout
 				let idx = $(this).attr("index")
 				$("#header-" + idx).css({"color": "rgba(255,255,255,0.4)"})
