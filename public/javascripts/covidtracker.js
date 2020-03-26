@@ -77,6 +77,20 @@ function getColor(intensity, forceVisible) {
 }
 
 //
+// render metadata section
+//
+function renderMetadata(location, confirmed, deaths, recovered, date, delta, color) {
+	$("#metadata-container").empty()
+	$("#metadata-container").append("<h6>" + date + "</h6>")				
+							.append($("<h2>").text(location).css("color", color))
+							.append("<h4><b>" + confirmed.toLocaleString() + "</b> cases confirmed</h4>")				
+							.append($("<h5>").html("<b>" + ((delta > 0) ? "+" : "-") + " " + delta.toLocaleString() + "</b> new case" + ((delta > 1) ? "s" : "")).css("color", color))
+							.append("<h4><b>" + deaths.toLocaleString() + "</b> deaths</h4>")
+							.append("<h4><b>" + recovered.toLocaleString() + "</b> recovered</h4>")
+
+}
+
+//
 // get total count for a given index value
 //
 function getCount(dict, index) {
@@ -110,9 +124,11 @@ $(document ).ready(function() {
 
 	// aggregate counts per location
 
-	var confirmedCounts = {}
-	var deathCounts = {}
-	var recoveredCounts = {}
+	var counts = {
+		"Confirmed": {},
+		"Deaths": {},
+		"Recovered": {}
+	}
 
 	for (var i=0; i<data.length; i++) {
 		var date = data[i]['date']
@@ -122,19 +138,19 @@ $(document ).ready(function() {
 			if (exclusionList.includes(location)) {
 				continue
 			}
-			if (!confirmedCounts[location]) {
-				confirmedCounts[location] = new Array(data.length).fill(0);
-				deathCounts[location] = new Array(data.length).fill(0);
-				recoveredCounts[location] = new Array(data.length).fill(0);
+			if (!counts["Confirmed"][location]) {
+				counts["Confirmed"][location] = new Array(data.length).fill(0);
+				counts["Deaths"][location] = new Array(data.length).fill(0);
+				counts["Recovered"][location] = new Array(data.length).fill(0);
 			}
 			if (entries[j]["Confirmed"]) {
-				confirmedCounts[location][i] += parseInt(entries[j]["Confirmed"])
+				counts["Confirmed"][location][i] += parseInt(entries[j]["Confirmed"])
 			}
 			if (entries[j]["Deaths"]) {
-				deathCounts[location][i] += parseInt(entries[j]["Deaths"])
+				counts["Deaths"][location][i] += parseInt(entries[j]["Deaths"])
 			}
 			if (entries[j]["Recovered"]) {
-				recoveredCounts[location][i] += parseInt(entries[j]["Recovered"])
+				counts["Recovered"][location][i] += parseInt(entries[j]["Recovered"])
 			}
 		}
 	}
@@ -151,21 +167,21 @@ $(document ).ready(function() {
 	// render grid
 
 	var rendered = 0	
-	for (location in confirmedCounts) {
+	for (location in counts["Confirmed"]) {
 		
 		if (rendered++ > 100) { break } // TODO: add proper pagination
 
-		for (var i=1; i<confirmedCounts[location].length; i++) {
+		for (var i=1; i<counts["Confirmed"][location].length; i++) {
 
 			var metric = null
 			var radius = null
 
 			switch(renderType) {
 				case renderConfig.TYPE.DELTA:
-					metric = (confirmedCounts[location][i] - confirmedCounts[location][i-1])
+					metric = (counts["Confirmed"][location][i] - counts["Confirmed"][location][i-1])
 					break
 				case renderConfig.TYPE.TOTAL:
-					metric = confirmedCounts[location][i]
+					metric = counts["Confirmed"][location][i]
 			}
 
 			radius = Math.min(Math.ceil(1+metric/50),8) + "px"
@@ -187,7 +203,7 @@ $(document ).ready(function() {
 		}
 
 
-		var lastVal = confirmedCounts[location].slice(-1)
+		var lastVal = counts["Confirmed"][location].slice(-1)
 		var color = getColor(lastVal, true)
 		var entry = $("<div>" + location + " (" + lastVal.toLocaleString() + ")</div>")
 						.addClass("row-label")
@@ -198,32 +214,33 @@ $(document ).ready(function() {
 		// row label hover
 		entry.hover(function() { 
 			let l =  $(this).attr("location")
-			let lastCount = confirmedCounts[l].slice(-1)
-			var delta = confirmedCounts[l].slice(-1) - confirmedCounts[l].slice(-2)[0]
-			$("#metadata-container").empty()
-			$("#metadata-container").append("<h6>" + data.slice(-1)[0]["date"] + "</h6>")				
-									.append($("<h2>").text(l).css("color", $(this).attr("color")))
-									.append("<h4><b>" + confirmedCounts[l].slice(-1).toLocaleString() + "</b> cases confirmed</h4>")				
-									.append($("<h5>").html("<b>" + ((delta > 0) ? "+" : "-") + " " + delta.toLocaleString() + "</b> new case" + ((delta > 1) ? "s" : "")).css("color", $(this).attr("color")))
-									.append("<h4><b>" + deathCounts[l].slice(-1).toLocaleString() + "</b> deaths</h4>")
-									.append("<h4><b>" + recoveredCounts[l].slice(-1).toLocaleString() + "</b> recovered</h4>")
+			let lastCount = counts["Confirmed"][l].slice(-1)
+			var delta = counts["Confirmed"][l].slice(-1) - counts["Confirmed"][l].slice(-2)[0]
+			renderMetadata(l, counts, data.slice(-1)[0]["date"], delta, getColor(delta),data.length-1)
+
+			renderMetadata(l, 
+							counts["Confirmed"][l].slice(-1), 
+							counts["Deaths"][l].slice(-1),
+							counts["Recovered"][l].slice(-1),
+							data.slice(-1)[0]["date"], 
+							delta,
+							getColor(delta))
 		})
 
 		$("#grid").append(entry)	
 	}
 
 	// add worldwide stats on init
+	var delta = getCount(counts["Confirmed"], data.length-1) - getCount(counts["Confirmed"], data.length-2)
+	var index = data.length-1
 
-	var delta = getCount(confirmedCounts, data.length-1) - getCount(confirmedCounts, data.length-2)
-	var color = getColor(delta)
-	$("#metadata-container").empty()
-	$("#metadata-container").append("<h6>" + data.slice(-1)[0]["date"] + "</h6>")				
-							.append($("<h2>").text("Worldwide").css("color", color))
-							.append("<h4><b>" + getCount(confirmedCounts, data.length-1).toLocaleString() + "</b> cases confirmed</h4>")				
-							.append($("<h5>").html("<b>" + ((delta > 0) ? "+" : "-") + " " + delta.toLocaleString() + "</b> new case" + ((delta > 1) ? "s" : "")).css("color", color))
-							.append("<h4><b>" + getCount(deathCounts, data.length-1).toLocaleString() + "</b> deaths</h4>")
-							.append("<h4><b>" + getCount(recoveredCounts, data.length-1).toLocaleString() + "</b> recovered</h4>")
-
+	renderMetadata("Worldwide", 
+					getCount(counts["Confirmed"], index), 
+					getCount(counts["Deaths"], index),
+					getCount(counts["Recovered"], index),
+					data.slice(-1)[0]["date"], 
+					delta,
+					getColor(delta))
 
 
 	// add filter toggles
