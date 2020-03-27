@@ -310,6 +310,7 @@ $(document).ready(function() {
 
 	if (searchParams.has("country")) {
 		countryFilter = searchParams.get("country")
+		$("#filter-container").html(countryFilter + ' Only' + '<a href="/">Remove Filter</a>')
 	}
 
 	if (searchParams.has("type")) {
