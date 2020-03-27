@@ -378,7 +378,7 @@ $(document).ready(function() {
 		
 		renderType = avail[(avail.indexOf(renderType) + 1)%avail.length]
 		searchParams.set("type", renderType)
-		// window.location.search = searchParams
+		window.history.pushState('', '', '?' + searchParams)
 
 		renderGrid(data, counts)
 		updateFilters()
@@ -389,7 +389,7 @@ $(document).ready(function() {
 		
 		renderVariable = avail[(avail.indexOf(renderVariable) + 1)%avail.length]
 		searchParams.set("variable", renderVariable)
-		// window.location.search = searchParams
+		window.history.pushState('', '', '?' + searchParams)
 
 		renderGrid(data, counts)
 		updateFilters()
