@@ -197,6 +197,7 @@ function renderGrid(data, counts, start, end) {
 
 			// row entry hover
 			entry.hover(function() { 		// mouseover
+
 				let idx = $(this).attr("index")
 				let location = $(this).attr("location")
 				$("#header-" + idx).css({"color": "#fff"})
@@ -287,7 +288,6 @@ function updateFilters() {
 $(document).ready(function() {
 	
 	let data = getCovidData()
-	let start = new Date()
 
 	let searchParams = new URLSearchParams(window.location.search)
 	let countryFilter = null
@@ -383,9 +383,5 @@ $(document).ready(function() {
 		renderGrid(data, counts)
 		updateFilters()
 	})
-
-	// add the grid element
-
-	console.log(new Date() - start + " ms")
 
 })
