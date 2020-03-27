@@ -163,7 +163,7 @@ function getCount(dict, index) {
 //
 // render main infographics grid
 //
-function renderGrid(data, counts, gridWidth, start, end) {
+function renderGrid(data, counts, gridWidth, loader, start, end) {
 
 	if (!start) { start = 0 }
 	if (!end) { end = 100 }
@@ -221,7 +221,7 @@ function renderGrid(data, counts, gridWidth, start, end) {
 							counts["Recovered"][location][idx],
 							data[idx]["date"], 
 							delta,
-							getColor(delta))
+							getColor(delta, true))
 
 			},function() { 					// mouseout
 				let idx = $(this).attr("index")
@@ -253,7 +253,7 @@ function renderGrid(data, counts, gridWidth, start, end) {
 							counts["Recovered"][l].slice(-1),
 							data.slice(-1)[0]["date"], 
 							delta,
-							getColor(delta))
+							getColor(delta, true))
 		})
 
 		// row label click
@@ -287,6 +287,8 @@ function renderGrid(data, counts, gridWidth, start, end) {
 	$(".legend-entries").css("width", gridWidth + "px")
 	$("#legend").show()
 
+	// clearInterval(loader)
+
 }
 
 function updateFilters() {
@@ -301,7 +303,7 @@ function updateFilters() {
 // grid init, rendering, etc.
 //
 $(document).ready(function() {
-	
+
 	let data = getCovidData()
 
 	let searchParams = new URLSearchParams(window.location.search)
@@ -325,7 +327,7 @@ $(document).ready(function() {
 
 	let xmax = window.innerWidth
 	let cellIncrement = 80/(data.length*1.3)
-	let gridWidth = ((data.length-1)*cellIncrement/100)*xmax + 4*(data.length-1) - 18
+	let gridWidth = ((data.length-1)*cellIncrement/100)*xmax + 4*(data.length-1) - 20
 	let labelSpace = (xmax - gridWidth)*0.9
 
 	let grid = $("<div>").attr('id', 'grid')

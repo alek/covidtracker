@@ -285,3 +285,12 @@ svg:hover {
 	color: #989490;
 	font-weight: 300;
 }
+
+.loader-image {
+	height: 30px;
+	margin-bottom: 0px;
+}
+
+#loading-tag {
+	margin-top: -10px;
+}
