@@ -27,6 +27,7 @@ const renderConfig = {
 	},
 	VARIABLE: {
 		CONFIRMED: "Confirmed",
+		// ACTIVE: "Active",		// sparse coverage - disable for now
 		RECOVERED: "Recovered",
 		DEATHS: "Deaths"
 	},
@@ -280,6 +281,7 @@ function renderGrid(data, counts, start, end) {
 					getCount(counts["Confirmed"], index), 
 					getCount(counts["Deaths"], index),
 					getCount(counts["Recovered"], index),
+					getCount(counts["Active"], index),
 					data.slice(-1)[0]["date"], 
 					delta,
 					getColor(delta))	
@@ -329,6 +331,7 @@ $(document).ready(function() {
 
 	let counts = {
 		"Confirmed": {},
+		"Active": {},
 		"Deaths": {},
 		"Recovered": {}
 	}
@@ -353,18 +356,15 @@ $(document).ready(function() {
 			}
 
 			if (!counts["Confirmed"][location]) {
-				counts["Confirmed"][location] = new Array(data.length).fill(0);
-				counts["Deaths"][location] = new Array(data.length).fill(0);
-				counts["Recovered"][location] = new Array(data.length).fill(0);
+				for (let key in counts) {
+					counts[key][location] = new Array(data.length).fill(0);
+				}
 			}
-			if (entries[j]["Confirmed"]) {
-				counts["Confirmed"][location][i] += parseInt(entries[j]["Confirmed"])
-			}
-			if (entries[j]["Deaths"]) {
-				counts["Deaths"][location][i] += parseInt(entries[j]["Deaths"])
-			}
-			if (entries[j]["Recovered"]) {
-				counts["Recovered"][location][i] += parseInt(entries[j]["Recovered"])
+
+			for (let key in counts) {
+				if (entries[j][key]) {
+					counts[key][location][i] += parseInt(entries[j][key])
+				}
 			}
 		}
 	}
