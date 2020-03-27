@@ -2,6 +2,8 @@
 // Interactive grid rendering of the JHU CSSE data
 //
 
+import { getCovidData } from './covid-data.js'
+
 const exclusionList = ["Others", "null", "undefined", "None", "Unassigned Location (From Diamond Princess)", 
 						"Unassigned Location (From Diamond Princess)", "Recovered", "Grand Princess Cruise Ship",
 						"Wuhan Evacuee" ]
@@ -151,7 +153,7 @@ function renderMetadata(location, confirmed, deaths, recovered, date, delta, col
 //
 function getCount(dict, index) {
 	let result = 0
-	for (key in dict) {
+	for (let key in dict) {
 		result += dict[key][index]
 	}
 	return result
