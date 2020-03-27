@@ -163,7 +163,7 @@ function getCount(dict, index) {
 //
 // render main infographics grid
 //
-function renderGrid(data, counts, gridWidth, loader, start, end) {
+function renderGrid(data, counts, gridWidth, start, end) {
 
 	if (!start) { start = 0 }
 	if (!end) { end = 100 }
@@ -286,8 +286,7 @@ function renderGrid(data, counts, gridWidth, loader, start, end) {
 	// reveal the legend section
 	$(".legend-entries").css("width", gridWidth + "px")
 	$("#legend").show()
-
-	// clearInterval(loader)
+	$("#loader").hide()
 
 }
 

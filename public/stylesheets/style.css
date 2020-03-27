@@ -286,11 +286,23 @@ svg:hover {
 	font-weight: 300;
 }
 
+#loader {
+	height: 20vh;
+	position: fixed;
+	bottom: 0%;
+	width: 30%;
+	padding-left: 50px;
+	opacity: 1;
+
+}
+
 .loader-image {
 	height: 30px;
 	margin-bottom: 0px;
 }
 
 #loading-tag {
-	margin-top: -10px;
+	margin-top: -5px;
+	text-transform: uppercase;
+	font-size: 10px;
 }
