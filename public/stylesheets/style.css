@@ -49,28 +49,17 @@ body {
 	overflow-x: hidden
 }
 
-#main {
-}
-
-#grid-container {
-/*	min-width: 70%;
-	max-width: 70%;*/
-}
-
 #metadata-container {
-	/*margin-top: 30px;*/
 	height: 20vh;
 	position: fixed;
 	bottom: 0%;
 	width: 30%;
 	padding-left: 50px;
-	/*background-color: red;*/
 	opacity: 1;
 }
 
 #metadata-container h2 {
 	font-size: 18px;
-	/*line-height: 48px;*/
 	margin-bottom: 12px;
 	margin-top: 6px;
 	color: #73706F;
@@ -101,6 +90,7 @@ b {
 #grid {
     margin-top: 50px;
     margin-left: 50px;
+    margin-right: 0px;
     display: grid;
     grid-gap: 4px;
     align-items: center;
@@ -225,8 +215,8 @@ svg:hover {
 }
 
 #legend {
-	margin: 55px 50px 0px 50px;
-	width: 100%;
+	margin: 55px 0px 0px 50px;
+	/*width: 100%;*/
 	display: none;
 }
 
@@ -287,7 +277,6 @@ svg:hover {
 
 .info {
 	display: inline-block;
-	/*margin-right: 15%;	*/
 }
 
 .info a {

@@ -163,7 +163,7 @@ function getCount(dict, index) {
 //
 // render main infographics grid
 //
-function renderGrid(data, counts, start, end) {
+function renderGrid(data, counts, gridWidth, start, end) {
 
 	if (!start) { start = 0 }
 	if (!end) { end = 100 }
@@ -269,8 +269,6 @@ function renderGrid(data, counts, start, end) {
 
 		$("#grid").append(entry)	
 
-		// reveal the legend section
-		$("#legend").show()
 	}
 
 	// add worldwide stats
@@ -284,6 +282,11 @@ function renderGrid(data, counts, start, end) {
 					data.slice(-1)[0]["date"], 
 					delta,
 					getColor(delta))	
+
+	// reveal the legend section
+	$(".legend-entries").css("width", gridWidth + "px")
+	$("#legend").show()
+
 }
 
 function updateFilters() {
@@ -320,11 +323,15 @@ $(document).ready(function() {
 
 	// init the container grid
 
+	let xmax = window.innerWidth
 	let cellIncrement = 80/(data.length*1.3)
+	let gridWidth = ((data.length-1)*cellIncrement/100)*xmax + 4*(data.length-1) - 18
+	let labelSpace = (xmax - gridWidth)*0.9
 
 	let grid = $("<div>").attr('id', 'grid')
-	grid.css({"grid-template-columns": "repeat(" + (data.length-1) + ", "  + cellIncrement + "%) 20%"})
+	grid.css({"grid-template-columns": "repeat(" + (data.length-1) + ", "  + cellIncrement + "%) " + labelSpace + "px"})
 	$("#grid-container").append(grid)
+
 
 	// aggregate counts per location
 
@@ -369,7 +376,7 @@ $(document).ready(function() {
 	}
 
 	// render the grid
-	renderGrid(data, counts)
+	renderGrid(data, counts, gridWidth)
 
 	// add filter toggles
 
@@ -380,7 +387,7 @@ $(document).ready(function() {
 		searchParams.set("type", renderType)
 		window.history.pushState('', '', '?' + searchParams)
 
-		renderGrid(data, counts)
+		renderGrid(data, counts, gridWidth)
 		updateFilters()
 	})
 
@@ -391,7 +398,7 @@ $(document).ready(function() {
 		searchParams.set("variable", renderVariable)
 		window.history.pushState('', '', '?' + searchParams)
 
-		renderGrid(data, counts)
+		renderGrid(data, counts, gridWidth)
 		updateFilters()
 	})
 
