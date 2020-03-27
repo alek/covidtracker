@@ -252,7 +252,9 @@ function renderGrid(data, counts, start, end) {
 		let searchParams = new URLSearchParams(window.location.search)
 		if (!searchParams.has("country")) {
 			entry.click(function() {
-				window.location.href = "?country=" + $(this).attr("location");
+				let searchParams = new URLSearchParams(window.location.search)
+				searchParams.set("country", $(this).attr("location"))				
+				window.location.href = "?" + searchParams
 			})
 		}
 
@@ -272,6 +274,13 @@ function renderGrid(data, counts, start, end) {
 					getColor(delta))	
 }
 
+function updateFilters() {
+	$("#type-label").text(renderType)		
+	$("#main-title").text("COVID-19 Daily " + renderType + " " + renderVariable)
+	$("#variable-label").text(renderVariable.replace("Confirmed", "Cases"))		
+	$("#main-title").text("COVID-19 Daily " + renderType + " " + renderVariable)
+}
+
 //
 // grid init, rendering, etc.
 //
@@ -286,6 +295,16 @@ $(document).ready(function() {
 	if (searchParams.has("country")) {
 		countryFilter = searchParams.get("country")
 	}
+
+	if (searchParams.has("type")) {
+		renderType = searchParams.get("type")
+	}
+
+	if (searchParams.has("variable")) {
+		renderVariable = searchParams.get("variable")
+	}
+
+	updateFilters()
 
 	// init the container grid
 
@@ -347,18 +366,24 @@ $(document).ready(function() {
 
 	$("#type-select").click(function() {
 		let avail = Object.values(renderConfig.TYPE)
+		
 		renderType = avail[(avail.indexOf(renderType) + 1)%avail.length]
+		searchParams.set("type", renderType)
+		window.location.search = searchParams
+
 		renderGrid(data, counts)
-		$("#type-label").text(renderType)		
-		$("#main-title").text("COVID-19 Daily " + renderType + " " + renderVariable)
+		updateFilters()
 	})
 
 	$("#variable-select").click(function() {
 		let avail = Object.values(renderConfig.VARIABLE)
+		
 		renderVariable = avail[(avail.indexOf(renderVariable) + 1)%avail.length]
+		searchParams.set("variable", renderVariable)
+		window.location.search = searchParams
+
 		renderGrid(data, counts)
-		$("#variable-label").text(renderVariable.replace("Confirmed", "Cases"))		
-		$("#main-title").text("COVID-19 Daily " + renderType + " " + renderVariable)
+		updateFilters()
 	})
 
 	// add the grid element
