@@ -25,8 +25,8 @@ const renderConfig = {
 	},
 	VARIABLE: {
 		CONFIRMED: "Confirmed",
-		DEATHS: "Deaths",
-		RECOVERED: "Recovered"
+		RECOVERED: "Recovered",
+		DEATHS: "Deaths"
 	},
 	FIELDS : {
 		COUNTRY: "Country/Region",
