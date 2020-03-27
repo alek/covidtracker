@@ -276,10 +276,11 @@ function renderGrid(data, counts, start, end) {
 }
 
 function updateFilters() {
+	let variableText = renderVariable.replace("Confirmed", "Cases") 
 	$("#type-label").text(renderType)		
-	$("#main-title").text("COVID-19 Daily " + renderType + " " + renderVariable)
-	$("#variable-label").text(renderVariable.replace("Confirmed", "Cases"))		
-	$("#main-title").text("COVID-19 Daily " + renderType + " " + renderVariable)
+	$("#main-title").text("COVID-19 Daily " + renderType + " " + variableText)
+	$("#variable-label").text(variableText)		
+	$("#main-title").text("COVID-19 Daily " + renderType + " " + variableText)
 }
 
 //
