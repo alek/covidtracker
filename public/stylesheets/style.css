@@ -225,9 +225,9 @@ svg:hover {
 }
 
 #legend {
-	margin-left: 50px;
-	margin: 50px;
+	margin: 55px 50px 0px 50px;
 	width: 100%;
+	display: none;
 }
 
 #legend h5 {
@@ -235,4 +235,64 @@ svg:hover {
 	color: #73706F;
 	letter-spacing: 1px;
 	font-size: 10px;
+}
+
+.legend-entries {
+	margin-top: 10px;
+	margin-bottom: 50px;
+	width: 79%;
+}
+
+.legend-entries div {
+	display: inline-block;
+}
+
+.legend-dot {
+    display: inline-block;
+    border-radius: 50%;
+    margin: auto;
+    min-width: 10px;
+    min-height: 10px;
+}
+
+.low-color {
+	background-color: #3EB19F;
+}
+
+.mid-color {
+	background-color: #FDD837;
+}
+
+.high-color {
+	background-color: #FA9260;
+}
+
+.breakout-color {
+	background-color: #DB508E;
+}
+
+.dot-text {
+	margin-left: 10px;
+	margin-right: 30px;
+	font-size: 12px;
+	letter-spacing: 1px;
+	font-weight: 300;
+	color: #989490;
+	text-transform: uppercase;
+}
+
+.footer-container {
+	display: flex;
+}
+
+.info {
+	display: inline-block;
+	/*margin-right: 15%;	*/
+}
+
+.info a {
+	text-decoration: none;
+	font-size: 12px;
+	color: #989490;
+	font-weight: 300;
 }

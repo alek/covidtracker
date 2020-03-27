@@ -260,6 +260,9 @@ function renderGrid(data, counts, start, end) {
 		}
 
 		$("#grid").append(entry)	
+
+		// reveal the legend section
+		$("#legend").show()
 	}
 
 	// add worldwide stats
