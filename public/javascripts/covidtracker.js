@@ -82,6 +82,11 @@ function cleanLocation(entry) {
 		entry['Province/State'] = "District of Columbia"
 	}
 
+	// weird records should be ignored
+	if (entry['Province/State'] == "US") {
+		entry['Province/State'] = "None"
+	}
+
 	// more hacks
 	if (!entry['Province/State'] || entry['Province/State'] === undefined) {
 		entry['Province/State'] = entry['Country/Region']
@@ -344,6 +349,7 @@ $(document).ready(function() {
 			if (exclusionList.includes(location)) {
 				continue
 			}
+
 			if (!counts["Confirmed"][location]) {
 				counts["Confirmed"][location] = new Array(data.length).fill(0);
 				counts["Deaths"][location] = new Array(data.length).fill(0);
