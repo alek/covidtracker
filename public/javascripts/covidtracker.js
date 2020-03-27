@@ -290,7 +290,8 @@ $(document).ready(function() {
 	// init the container grid
 
 	let cellIncrement = 80/(data.length*1.3)
-	let cellSize = (cellIncrement/100)*window.innerWidth
+
+	console.log(cellIncrement)
 	
 	let grid = $("<div>").attr('id', 'grid')
 	grid.css({"grid-template-columns": "repeat(" + (data.length-1) + ", "  + cellIncrement + "%) 20%"})
