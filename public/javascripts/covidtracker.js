@@ -249,7 +249,7 @@ function renderGrid(data, counts, start, end) {
 
 		// row label click
 
-		let searchParams = new URLSearchParams(window.location.search)
+		var searchParams = new URLSearchParams(window.location.search)
 		if (!searchParams.has("country")) {
 			entry.click(function() {
 				let searchParams = new URLSearchParams(window.location.search)
@@ -265,7 +265,7 @@ function renderGrid(data, counts, start, end) {
 	let delta = getCount(counts["Confirmed"], data.length-1) - getCount(counts["Confirmed"], data.length-2)
 	let index = data.length-1
 
-	renderMetadata("Worldwide", 
+	renderMetadata(searchParams.has("country") ? searchParams.get("country") : "Worldwide", 
 					getCount(counts["Confirmed"], index), 
 					getCount(counts["Deaths"], index),
 					getCount(counts["Recovered"], index),
@@ -310,8 +310,6 @@ $(document).ready(function() {
 
 	let cellIncrement = 80/(data.length*1.3)
 
-	console.log(cellIncrement)
-	
 	let grid = $("<div>").attr('id', 'grid')
 	grid.css({"grid-template-columns": "repeat(" + (data.length-1) + ", "  + cellIncrement + "%) 20%"})
 	$("#grid-container").append(grid)
