@@ -133,11 +133,11 @@ b {
 	/*font-size: 18px;*/
 }
 
-
 #header {
 	margin-left: 50px;
 	margin-top: 50px;
 	display: flex;
+/*	justify-content: space-between;*/
 	flex-direction: row;
 }
 
@@ -153,6 +153,24 @@ b {
 
 #nav-links {
 	display: flex;
+	align-items: center;
+	justify-content: center;
+	/*background-color: red;*/
+}
+
+#nav-links h7 {
+	font-weight: 300;
+	font-size: 10px;
+	margin-right: 40px;
+	letter-spacing: 1px;
+	line-height: 10px;
+	color: #73706F;
+	text-transform: uppercase;
+}
+
+.minilegend {
+	font-size: 8px;
+	color: #73706F;
 }
 
 .filter-selector {
