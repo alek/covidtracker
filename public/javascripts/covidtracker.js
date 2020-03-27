@@ -2,7 +2,9 @@
 // Interactive grid rendering of the JHU CSSE data
 //
 
-const exclusionList = ["Others", "null", "undefined", "None"]
+const exclusionList = ["Others", "null", "undefined", "None", "Unassigned Location (From Diamond Princess)", 
+						"Unassigned Location (From Diamond Princess)", "Recovered", "Grand Princess Cruise Ship",
+						"Wuhan Evacuee" ]
 
 const countrySynonyms = {
 	"Mainland China" : "China",
@@ -72,9 +74,29 @@ function cleanLocation(entry) {
 		entry['Country/Region'] = "Macau"
 	}
 
+	if (entry['Province/State'] == "Chicago") {
+		entry['Province/State'] = "Illinois"
+	}
+
+	if (entry['Province/State'] == "District Of Columbia") {
+		entry['Province/State'] = "District of Columbia"
+	}
+
 	// more hacks
 	if (!entry['Province/State'] || entry['Province/State'] === undefined) {
 		entry['Province/State'] = entry['Country/Region']
+	}
+
+	// us [ city, state ] format hack
+
+	if (entry['Country/Region'] == "US" && entry['Province/State'].indexOf(",") > 0) {
+		var state = entry['Province/State'].split(",")[1]
+		state = state.replace("(From Diamond Princess)","").replace(/\./g, '').trim()
+		if (usStateMapping[state]) {
+			entry['Province/State'] = usStateMapping[state]
+		} else {
+			entry['Province/State'] = entry['Province/State'].split(",")[0]
+		}
 	}
 
 	return entry
@@ -226,9 +248,13 @@ function renderGrid(data, counts, start, end) {
 		})
 
 		// row label click
-		entry.click(function() {
-			window.location.href = "?country=" + $(this).attr("location");
-		})
+
+		let searchParams = new URLSearchParams(window.location.search)
+		if (!searchParams.has("country")) {
+			entry.click(function() {
+				window.location.href = "?country=" + $(this).attr("location");
+			})
+		}
 
 		$("#grid").append(entry)	
 	}
@@ -290,8 +316,6 @@ $(document).ready(function() {
 					continue	// not matching the requested country - skip
 				 } else {		// country selected - aggregate by state
 				 	location = getLocation(entries[j], renderConfig.FIELDS.STATE) 
-				 	// console.log(entries[j])
-				 	// console.log(location)
 				 }
 			}
 
