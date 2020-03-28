@@ -276,7 +276,9 @@ svg:hover {
 }
 
 .info {
-	display: inline-block;
+	/*display: inline-block;*/
+	margin-left: 50px;
+	margin-bottom: 15px;
 }
 
 .info a {
@@ -317,6 +319,15 @@ svg:hover {
 	font-size: 12px;
 	font-weight: 300;
 	color: #73706F;
+}
+
+.project-link {
+	display: inline-block;
+	margin-right: 5px;
+}
+
+#repo-details a {
+	color: #DDDDDC;
 }
 
 @media (min-aspect-ratio: 3/2) {

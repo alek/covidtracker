@@ -143,7 +143,7 @@ function renderMetadata(location, confirmed, deaths, recovered, date, delta, col
 	$("#location-metadata").append("<h6>" + date + "</h6>")				
 							.append($("<h2>").text(location).css("color", color))
 							.append("<h4><b>" + confirmed.toLocaleString() + "</b> cases confirmed</h4>")				
-							.append($("<h5>").html("<b>" + ((delta > 0) ? "+" : "-") + " " + delta.toLocaleString() + "</b> new case" + ((delta > 1) ? "s" : "")).css("color", color))
+							.append($("<h5>").html("<b>" + ((delta >= 0) ? "+" : "-") + " " + delta.toLocaleString() + "</b> new case" + ((delta > 1) ? "s" : "")).css("color", color))
 							.append("<h4><b>" + deaths.toLocaleString() + "</b> deaths</h4>")
 							.append("<h4><b>" + recovered.toLocaleString() + "</b> recovered</h4>")
 
