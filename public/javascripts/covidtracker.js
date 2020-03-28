@@ -6,7 +6,7 @@ import { getCovidData } from './covid-data.js'
 
 const exclusionList = ["Others", "null", "undefined", "None", "Unassigned Location (From Diamond Princess)", 
 						"Unassigned Location (From Diamond Princess)", "Recovered", "Grand Princess Cruise Ship",
-						"Wuhan Evacuee" ]
+						"Wuhan Evacuee", "Grand Princess" ]
 
 const countrySynonyms = {
 	"Mainland China" : "China",
