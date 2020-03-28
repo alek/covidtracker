@@ -299,14 +299,14 @@ svg:hover {
 }
 
 .loader-image {
-	height: 30px;
+	height: 35px;
 	margin-bottom: 0px;
 }
 
 #loading-tag {
 	margin-top: -5px;
 	text-transform: uppercase;
-	font-size: 10px;
+	font-size: 12px;
 }
 
 #filter-container {
