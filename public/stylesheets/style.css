@@ -318,3 +318,9 @@ svg:hover {
 	font-weight: 300;
 	color: #73706F;
 }
+
+@media (min-aspect-ratio: 3/2) {
+	#metadata-container {
+		bottom: 40px;
+	}  
+}
