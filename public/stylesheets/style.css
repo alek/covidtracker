@@ -321,6 +321,6 @@ svg:hover {
 
 @media (min-aspect-ratio: 3/2) {
 	#legend {
-		padding-left: 20%;
+		/*padding-left: 20%;*/
 	}  
 }
