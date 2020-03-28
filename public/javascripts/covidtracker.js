@@ -139,8 +139,8 @@ function getColor(intensity, forceVisible) {
 // render metadata section
 //
 function renderMetadata(location, confirmed, deaths, recovered, date, delta, color) {
-	$("#metadata-container").empty()
-	$("#metadata-container").append("<h6>" + date + "</h6>")				
+	$("#location-metadata").empty()
+	$("#location-metadata").append("<h6>" + date + "</h6>")				
 							.append($("<h2>").text(location).css("color", color))
 							.append("<h4><b>" + confirmed.toLocaleString() + "</b> cases confirmed</h4>")				
 							.append($("<h5>").html("<b>" + ((delta > 0) ? "+" : "-") + " " + delta.toLocaleString() + "</b> new case" + ((delta > 1) ? "s" : "")).css("color", color))

@@ -44,7 +44,19 @@
     <div id="main">
 
       <div id="grid-container"></div>
-      <div id="metadata-container"></div>
+      <div id="metadata-container">
+        <div id="location-metadata"></div>          
+        <div id="legend">
+          <h5>legend</h5>
+          <div class="legend-entries">
+            <div class="legend-dot low-color"></div><div class="dot-text">< 1000</div>
+            <div class="legend-dot mid-color"></div><div class="dot-text">1000 - 2000</div>
+            <div class="legend-dot high-color"></div><div class="dot-text">2000 - 3000</div>
+            <div class="legend-dot breakout-color"></div><div class="dot-text">> 3000 cases</div>
+          </div>
+        </div>
+
+      </div>
 
        <div id="loader">
            <img src="/images/loader.gif" class="loader-image">
@@ -53,22 +65,11 @@
 
     </div>
 
-    <div id="legend">
-      <h5>legend</h5>
-      <div class="footer-container">
-
-        <div class="legend-entries">
-          <div class="legend-dot low-color"></div><div class="dot-text">< 1000</div>
-          <div class="legend-dot mid-color"></div><div class="dot-text">1000 - 2000</div>
-          <div class="legend-dot high-color"></div><div class="dot-text">2000 - 3000</div>
-          <div class="legend-dot breakout-color"></div><div class="dot-text">> 3000 cases</div>
-        </div>
-
-        <div class="info">
-          <a href="https://github.com/alek/covidtracker">Project Github Repo</a>
-        </div>
-
+    <div class="footer-container">
+      <div class="info">
+        <!-- <a href="https://github.com/alek/covidtracker">Project Github Repo</a> -->
       </div>
     </div>
+
   </body>
 </html>
