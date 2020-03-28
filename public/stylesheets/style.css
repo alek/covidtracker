@@ -320,7 +320,7 @@ svg:hover {
 }
 
 @media (min-aspect-ratio: 3/2) {
-	#metadata-container {
-		bottom: 40px;
+	#legend {
+		padding-left: 20%;
 	}  
 }
