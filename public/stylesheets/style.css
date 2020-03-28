@@ -88,9 +88,7 @@ b {
 }
 
 #grid {
-    margin-top: 50px;
-    margin-left: 50px;
-    margin-right: 0px;
+    margin: 50px 0 50px 50px;
     display: grid;
     grid-gap: 4px;
     align-items: center;
