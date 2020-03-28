@@ -217,7 +217,7 @@ svg:hover {
 #legend {
 	margin: 55px 0px 0px 50px;
 	/*width: 100%;*/
-	display: none;
+	display: none;	
 }
 
 #legend h5 {
@@ -320,7 +320,11 @@ svg:hover {
 }
 
 @media (min-aspect-ratio: 3/2) {
-	#legend {
-		/*padding-left: 20%;*/
-	}  
+	#metadata-container {
+		bottom: 50px;
+	}
+	.legend-entries {
+		margin-bottom: 25px;
+	}
+
 }
