@@ -171,7 +171,7 @@ function renderGrid(data, counts, gridWidth, start, end) {
 	$("#grid").empty() 	// clear any existing grid
 
 	// render dates
-	for (let i=1; i<data.length; i++) {
+	for (let i=0; i<data.length; i++) {
 		let entry = $("<div>").addClass("grid-header").attr("id", "header-" + i)
 		entry.text(data[i]['date'].split("-").slice(0,2).join(" "))		
 		$("#grid").append(entry)
@@ -185,14 +185,14 @@ function renderGrid(data, counts, gridWidth, start, end) {
 		if (rendered++ > end) { break } // TODO: add proper pagination
 		if (rendered < start) { continue }
 
-		for (let i=1; i<counts[renderVariable][location].length; i++) {
+		for (let i=0; i<counts[renderVariable][location].length; i++) {
 
 			let metric = null
 			let radius = null
 
 			switch(renderType) {
 				case renderConfig.TYPE.DELTA:
-					metric = (counts[renderVariable][location][i] - counts[renderVariable][location][i-1])
+					metric = (counts[renderVariable][location][i] - (i > 0 ? counts[renderVariable][location][i-1] : 0))
 					break
 				case renderConfig.TYPE.TOTAL:
 					metric = counts[renderVariable][location][i]
@@ -327,11 +327,11 @@ $(document).ready(function() {
 
 	let xmax = window.innerWidth
 	let cellIncrement = 80/(data.length*1.3)
-	let gridWidth = ((data.length-1)*cellIncrement/100)*xmax + 4*(data.length-1) - 20
+	let gridWidth = (data.length*cellIncrement/100)*xmax + 4*(data.length-1) - 20
 	let labelSpace = (xmax - gridWidth)*0.9
 
 	let grid = $("<div>").attr('id', 'grid')
-	grid.css({"grid-template-columns": "repeat(" + (data.length-1) + ", "  + cellIncrement + "%) " + labelSpace + "px"})
+	grid.css({"grid-template-columns": "repeat(" + data.length + ", "  + cellIncrement + "%) " + labelSpace + "px"})
 	$("#grid-container").append(grid)
 
 
