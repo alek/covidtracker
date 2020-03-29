@@ -130,7 +130,7 @@ b {
 }
 
 #title-container {
-	width: 65%;
+	width: 55%;
 	color: #B4B5B6;
 }
 
@@ -161,6 +161,10 @@ b {
 	color: #73706F;
 }
 
+#sort-container {
+	margin-left: 50px;
+}
+
 .filter-selector {
 	cursor: pointer;
 }
@@ -169,7 +173,7 @@ svg:hover {
 	fill: #f00;
 }
 
-#nav-links #type-label, #variable-label {
+#nav-links #type-label, #variable-label, #sort-label {
 	text-decoration: none;
 	color: #808080;
 	text-transform: uppercase;
@@ -185,6 +189,10 @@ svg:hover {
 }
 
 #nav-links #variable-label:hover {
+	color: #fff;
+}
+
+#nav-links #sort-label:hover {
 	color: #fff;
 }
 

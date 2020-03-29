@@ -35,13 +35,18 @@ const renderConfig = {
 	FIELDS : {
 		COUNTRY: "Country/Region",
 		STATE: "Province/State"
-	}	
+	},
+	SORT: {
+		TIME: "Time",
+		CASES: "Cases"
+	}
 }
 
 // load-time defaults
 var renderType = renderConfig.TYPE.DELTA
 var renderVariable = renderConfig.VARIABLE.CONFIRMED
 var aggregateField = renderConfig.FIELDS.COUNTRY
+var sortCriteria = renderConfig.SORT.TIME
 
 //
 // normalize different representations 
@@ -184,12 +189,10 @@ function renderGrid(data, counts, gridWidth, start, end) {
 	}
 
 	// location resorting
-	if (searchParams.has("sort") && (searchParams.get("sort") == "cases")) {
+	if (searchParams.has("sort") && (searchParams.get("sort").toLowerCase() == "cases")) {
 		let keys = Object.keys(locations)
 		keys = keys.sort(function(a,b) { 
-			let valA = counts[renderVariable][a].slice(-1)[0]
-			let valB = counts[renderVariable][b].slice(-1)[0]
-			return valB - valA
+			return counts[renderVariable][b].slice(-1)[0] - counts[renderVariable][a].slice(-1)[0]
 		})
 		let result = {}
 		for (let i in keys) {
@@ -328,6 +331,7 @@ function updateFilters() {
 	$("#main-title").text("COVID-19 Daily " + renderType + " " + variableText)
 	$("#variable-label").text(variableText)		
 	$("#main-title").text("COVID-19 Daily " + renderType + " " + variableText)
+	$("#sort-label").text(sortCriteria)		
 }
 
 //
@@ -431,6 +435,17 @@ $(document).ready(function() {
 		
 		renderVariable = avail[(avail.indexOf(renderVariable) + 1)%avail.length]
 		searchParams.set("variable", renderVariable)
+		window.history.pushState('', '', '?' + searchParams)
+
+		renderGrid(data, counts, gridWidth)
+		updateFilters()
+	})
+
+	$("#sort-select").click(function() {
+		let avail = Object.values(renderConfig.SORT)
+		
+		sortCriteria = avail[(avail.indexOf(sortCriteria) + 1)%avail.length]
+		searchParams.set("sort", sortCriteria)
 		window.history.pushState('', '', '?' + searchParams)
 
 		renderGrid(data, counts, gridWidth)
