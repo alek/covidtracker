@@ -8,6 +8,7 @@ const exclusionList = ["Others", "null", "undefined", "None", "Unassigned Locati
 						"Unassigned Location (From Diamond Princess)", "Recovered", "Grand Princess Cruise Ship",
 						"Wuhan Evacuee", "Grand Princess", "Diamond Princess" ]
 
+// for data consistency - no politics
 const countrySynonyms = {
 	"Mainland China" : "China",
 	"United Kingdom" : "UK",
@@ -168,6 +169,20 @@ function renderGrid(data, counts, gridWidth, start, end) {
 	if (!start) { start = 0 }
 	if (!end) { end = 100 }
 
+	var locations = {}
+
+	// explicit url param location list override
+
+	let searchParams = new URLSearchParams(window.location.search)
+	if (searchParams.has("locations")) {
+		let parts = searchParams.get("locations").split(",")
+		for (let i in parts) {
+			locations[parts[i]] = i
+		}
+	} else {
+		locations = counts[renderVariable]		
+	}
+
 	$("#grid").empty() 	// clear any existing grid
 
 	// render dates
@@ -180,7 +195,7 @@ function renderGrid(data, counts, gridWidth, start, end) {
 	$("#grid").append($("<div>"))	// padding
 
 	let rendered = 0	
-	for (let location in counts[renderVariable]) {
+	for (let location in locations) {
 		
 		if (rendered++ > end) { break } // TODO: add proper pagination
 		if (rendered < start) { continue }
@@ -257,8 +272,6 @@ function renderGrid(data, counts, gridWidth, start, end) {
 		})
 
 		// row label click
-
-		var searchParams = new URLSearchParams(window.location.search)
 		if (!searchParams.has("country")) {
 			entry.click(function() {
 				let searchParams = new URLSearchParams(window.location.search)
@@ -307,6 +320,7 @@ $(document).ready(function() {
 
 	let searchParams = new URLSearchParams(window.location.search)
 	let countryFilter = null
+	var locationList = null
 
 	if (searchParams.has("country")) {
 		countryFilter = searchParams.get("country")
