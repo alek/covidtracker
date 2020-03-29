@@ -183,6 +183,21 @@ function renderGrid(data, counts, gridWidth, start, end) {
 		locations = counts[renderVariable]		
 	}
 
+	// location resorting
+	if (searchParams.has("sort") && (searchParams.get("sort") == "cases")) {
+		let keys = Object.keys(locations)
+		keys = keys.sort(function(a,b) { 
+			let valA = counts[renderVariable][a].slice(-1)[0]
+			let valB = counts[renderVariable][b].slice(-1)[0]
+			return valB - valA
+		})
+		let result = {}
+		for (let i in keys) {
+			result[keys[i]] = locations[keys[i]]
+		}
+		locations = result
+	}
+
 	$("#grid").empty() 	// clear any existing grid
 
 	// render dates
