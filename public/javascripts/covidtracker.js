@@ -200,6 +200,10 @@ function renderGrid(data, counts, gridWidth, start, end) {
 		if (rendered++ > end) { break } // TODO: add proper pagination
 		if (rendered < start) { continue }
 
+		if (!counts[renderVariable][location]) {
+			continue
+		}
+
 		for (let i=0; i<counts[renderVariable][location].length; i++) {
 
 			let metric = null
