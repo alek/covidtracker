@@ -34,7 +34,8 @@ const renderConfig = {
 	},
 	FIELDS : {
 		COUNTRY: "Country/Region",
-		STATE: "Province/State"
+		STATE: "Province/State",
+		COUNTY: "County"
 	},
 	SORT: {
 		TIME: "Time",
@@ -385,6 +386,10 @@ $(document).ready(function() {
 		let date = data[i]['date']
 		let entries = data[i]['entries']
 		for (let j=0; j<entries.length; j++) {
+
+			if (entries[j]['Source'] != "jhu") {
+				continue
+			}
 
 			let location = getLocation(entries[j], aggregateField)
 
