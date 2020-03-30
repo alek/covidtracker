@@ -387,9 +387,10 @@ $(document).ready(function() {
 		let entries = data[i]['entries']
 		for (let j=0; j<entries.length; j++) {
 
-			if (entries[j]['Source'] != "jhu") {
-				continue
-			}
+			// only show JHU data (disabled atm)			
+			// if (entries[j]['Source'] != "jhu") {	
+			// 	continue
+			// }
 
 			let location = getLocation(entries[j], aggregateField)
 
