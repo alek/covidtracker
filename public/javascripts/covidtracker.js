@@ -240,7 +240,7 @@ function renderGrid(data, counts, gridWidth, start, end) {
 					searchParams.set("country", $(this).attr("location"))				
 					window.location.href = "?" + searchParams
 				})
-			} else if (searchParams.get("country") == "US") {	// US state drilldown
+			} else if (searchParams.get("country") == "US" && !searchParams.has("state")) {	// US state drilldown
 				entry.click(function() {
 					let searchParams = new URLSearchParams(window.location.search)
 					searchParams.set("state", $(this).attr("location"))				
@@ -254,15 +254,21 @@ function renderGrid(data, counts, gridWidth, start, end) {
 
 	}
 
-	// add worldwide stats
-	let delta = getCount(counts["Confirmed"], data.length-1) - getCount(counts["Confirmed"], data.length-2)
+	// add global stats
+	
+	// hack for the nytimes 1 day time slip
 	let index = data.length-1
+	if (getCount(counts["Confirmed"], index) == 0) {
+		index = index -1
+	}
 
-	renderMetadata(searchParams.has("country") ? searchParams.get("country") : "Worldwide", 
+	let delta = getCount(counts["Confirmed"], index) - getCount(counts["Confirmed"], index-1)
+
+	renderMetadata(searchParams.has("country") ? (searchParams.has("state") ? searchParams.get("state") : searchParams.get("country")) : "Worldwide", 
 					getCount(counts["Confirmed"], index), 
 					getCount(counts["Deaths"], index),
 					getCount(counts["Recovered"], index),
-					data.slice(-1)[0]["date"], 
+					data[index]["date"], 
 					delta,
 					getColor(delta))	
 
