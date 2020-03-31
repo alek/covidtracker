@@ -205,52 +205,50 @@ function renderGrid(data, counts, gridWidth, start, end) {
 		}
 
 		let lastVal = getLastNonzero(counts[renderVariable][location])["value"]
-		if (lastVal) {
+		if (!lastVal) { lastVal = 0 } // for grid consistency
 
-			let color = getColor(lastVal, true)		
-			let entry = $("<div>" + location + " (" + lastVal.toLocaleString() + ")</div>")
-							.addClass("row-label")
-							.attr({"location": location, "color": color})
-							.css({"color": color})
+		let color = getColor(lastVal, true)		
+		let entry = $("<div>" + location + " (" + lastVal.toLocaleString() + ")</div>")
+						.addClass("row-label")
+						.attr({"location": location, "color": color})
+						.css({"color": color})
 
 
-			// row label hover
-			entry.hover(function() { 
-				let l =  $(this).attr("location")
-				let lastEntry = getLastNonzero(counts[renderVariable][l])
-				let lastCount = lastEntry["value"]
-				let lastIndex = lastEntry["index"]			
-				let delta = getLastDelta(counts[renderVariable][l])
-				// renderMetadata(l, counts, data.slice(-1)[0]["date"], delta, getColor(delta),data.length-1)
-				renderMetadata(l, counts, data[lastIndex]["date"], delta, getColor(delta),data.length-1)
+		// row label hover
+		entry.hover(function() { 
+			let l =  $(this).attr("location")
+			let lastEntry = getLastNonzero(counts[renderVariable][l])
+			let lastCount = lastEntry["value"]
+			let lastIndex = lastEntry["index"]			
+			let delta = getLastDelta(counts[renderVariable][l])
+			renderMetadata(l, counts, data[lastIndex]["date"], delta, getColor(delta),data.length-1)
 
-				renderMetadata(l, 
-								counts["Confirmed"][l][lastIndex], 
-								counts["Deaths"][l][lastIndex],
-								counts["Recovered"][l][lastIndex],
-								data[lastIndex]["date"], 
-								delta,
-								getColor(delta, true))
+			renderMetadata(l, 
+							counts["Confirmed"][l][lastIndex], 
+							counts["Deaths"][l][lastIndex],
+							counts["Recovered"][l][lastIndex],
+							data[lastIndex]["date"], 
+							delta,
+							getColor(delta, true))
+		})
+
+		// row label click
+		if (!searchParams.has("country")) {
+			entry.click(function() {
+				let searchParams = new URLSearchParams(window.location.search)
+				searchParams.set("country", $(this).attr("location"))				
+				window.location.href = "?" + searchParams
 			})
-
-			// row label click
-			if (!searchParams.has("country")) {
-				entry.click(function() {
-					let searchParams = new URLSearchParams(window.location.search)
-					searchParams.set("country", $(this).attr("location"))				
-					window.location.href = "?" + searchParams
-				})
-			} else if (searchParams.get("country") == "US" && !searchParams.has("state")) {	// US state drilldown
-				entry.click(function() {
-					let searchParams = new URLSearchParams(window.location.search)
-					searchParams.set("state", $(this).attr("location"))				
-					window.location.href = "?" + searchParams
-				})
-			}
-
-			$("#grid").append(entry)	
-
+		} else if (searchParams.get("country") == "US" && !searchParams.has("state")) {	// US state drilldown
+			entry.click(function() {
+				let searchParams = new URLSearchParams(window.location.search)
+				searchParams.set("state", $(this).attr("location"))				
+				window.location.href = "?" + searchParams
+			})
 		}
+
+		$("#grid").append(entry)	
+
 
 	}
 
