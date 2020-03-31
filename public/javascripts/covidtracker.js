@@ -71,14 +71,34 @@ function getCount(dict, index) {
 //
 // find last nonzero value in the array
 //
-function getLastVal(array) {
+function getLastNonzero(array) {
 	if (array.length > 0) {
-		for (var i=array.length-1; i>0; i--) {
+		for (let i=array.length-1; i>0; i--) {
 			if (array[i] != 0) {
-				return array[i]
+				return {"index": i, "value": array[i]}
 			}
 		}
 	} 
+	return 0
+}
+
+//
+// find the last available change in the array
+//
+function getLastDelta(array) {
+	let last = null
+	if (array.length > 1) {
+		for (let i=array.length-1; i>0; i--) {
+			if (array[i] != 0) {
+				if (!last) {
+					last = array[i]
+				} else {
+					return last - array[i]
+				}
+			}
+		}
+
+	}
 	return 0
 }
 
@@ -108,7 +128,7 @@ function renderGrid(data, counts, gridWidth, start, end) {
 	if (searchParams.has("sort") && (searchParams.get("sort").toLowerCase() == "cases")) {
 		let keys = Object.keys(locations)
 		keys = keys.sort(function(a,b) { 
-			return getLastVal(counts[renderVariable][b]) - getLastVal(counts[renderVariable][a])
+			return getLastNonzero(counts[renderVariable][b])["value"] - getLastNonzero(counts[renderVariable][a])["value"]
 		})
 		let result = {}
 		for (let i in keys) {
@@ -184,7 +204,7 @@ function renderGrid(data, counts, gridWidth, start, end) {
 			$("#grid").append(entry)
 		}
 
-		let lastVal = getLastVal(counts[renderVariable][location])
+		let lastVal = getLastNonzero(counts[renderVariable][location])["value"]
 		let color = getColor(lastVal, true)
 		let entry = $("<div>" + location + " (" + lastVal.toLocaleString() + ")</div>")
 						.addClass("row-label")
@@ -195,15 +215,18 @@ function renderGrid(data, counts, gridWidth, start, end) {
 		// row label hover
 		entry.hover(function() { 
 			let l =  $(this).attr("location")
-			let lastCount = counts[renderVariable][l].slice(-1)
-			let delta = counts[renderVariable][l].slice(-1) - counts[renderVariable][l].slice(-2)[0]
-			renderMetadata(l, counts, data.slice(-1)[0]["date"], delta, getColor(delta),data.length-1)
+			let lastEntry = getLastNonzero(counts[renderVariable][l])
+			let lastCount = lastEntry["value"]
+			let lastIndex = lastEntry["index"]			
+			let delta = getLastDelta(counts[renderVariable][l])
+			// renderMetadata(l, counts, data.slice(-1)[0]["date"], delta, getColor(delta),data.length-1)
+			renderMetadata(l, counts, data[lastIndex]["date"], delta, getColor(delta),data.length-1)
 
 			renderMetadata(l, 
-							counts["Confirmed"][l].slice(-1), 
-							counts["Deaths"][l].slice(-1),
-							counts["Recovered"][l].slice(-1),
-							data.slice(-1)[0]["date"], 
+							counts["Confirmed"][l][lastIndex], 
+							counts["Deaths"][l][lastIndex],
+							counts["Recovered"][l][lastIndex],
+							data[lastIndex]["date"], 
 							delta,
 							getColor(delta, true))
 		})
