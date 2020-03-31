@@ -12,6 +12,7 @@ const countrySynonyms = {
 	"Mainland China" : "China",
 	"United Kingdom" : "UK",
 	"Korea, South" : "South Korea",
+	"Republic of Korea": "South Korea",
 	"Taiwan*" : "Taiwan",
 	"Iran (Islamic Republic of)": "Iran",
 	"Taipei and environs": "Taiwan",
