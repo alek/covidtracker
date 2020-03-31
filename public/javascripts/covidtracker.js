@@ -302,7 +302,7 @@ $(document).ready(function() {
 	if (searchParams.has("country")) {
 		countryFilter = searchParams.get("country")
 		queryFilters.push("country=" + countryFilter)
-		$("#filter-container").html(countryFilter + ' Only' + '<a href="/">Remove Filter</a>')
+		$("#filter-container").html(countryFilter + ' Only' + '<a href="/" id="remove-filter">Remove Filter</a>')
 	}
 
 	if (searchParams.has("state")) {
