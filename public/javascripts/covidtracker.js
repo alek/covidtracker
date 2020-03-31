@@ -69,6 +69,20 @@ function getCount(dict, index) {
 }
 
 //
+// find last nonzero value in the array
+//
+function getLastVal(array) {
+	if (array.length > 0) {
+		for (var i=array.length-1; i>0; i--) {
+			if (array[i] != 0) {
+				return array[i]
+			}
+		}
+	} 
+	return 0
+}
+
+//
 // render main infographics grid
 //
 function renderGrid(data, counts, gridWidth, start, end) {
@@ -94,7 +108,7 @@ function renderGrid(data, counts, gridWidth, start, end) {
 	if (searchParams.has("sort") && (searchParams.get("sort").toLowerCase() == "cases")) {
 		let keys = Object.keys(locations)
 		keys = keys.sort(function(a,b) { 
-			return counts[renderVariable][b].slice(-1)[0] - counts[renderVariable][a].slice(-1)[0]
+			return getLastVal(counts[renderVariable][b]) - getLastVal(counts[renderVariable][a])
 		})
 		let result = {}
 		for (let i in keys) {
@@ -170,8 +184,7 @@ function renderGrid(data, counts, gridWidth, start, end) {
 			$("#grid").append(entry)
 		}
 
-
-		let lastVal = counts[renderVariable][location].slice(-1)
+		let lastVal = getLastVal(counts[renderVariable][location])
 		let color = getColor(lastVal, true)
 		let entry = $("<div>" + location + " (" + lastVal.toLocaleString() + ")</div>")
 						.addClass("row-label")
@@ -200,6 +213,12 @@ function renderGrid(data, counts, gridWidth, start, end) {
 			entry.click(function() {
 				let searchParams = new URLSearchParams(window.location.search)
 				searchParams.set("country", $(this).attr("location"))				
+				window.location.href = "?" + searchParams
+			})
+		} else if (searchParams.get("country") == "US") {	// US state drilldown
+			entry.click(function() {
+				let searchParams = new URLSearchParams(window.location.search)
+				searchParams.set("state", $(this).attr("location"))				
 				window.location.href = "?" + searchParams
 			})
 		}
@@ -251,6 +270,12 @@ $(document).ready(function() {
 		countryFilter = searchParams.get("country")
 		queryFilters.push("country=" + countryFilter)
 		$("#filter-container").html(countryFilter + ' Only' + '<a href="/">Remove Filter</a>')
+	}
+
+	if (searchParams.has("state")) {
+		stateFilter = searchParams.get("state")
+		queryFilters.push("state=" + stateFilter)
+		$("#filter-container").html(stateFilter + ' Only' + '<a href="/">Remove Filter</a>')
 	}
 
 	if (searchParams.has("type")) {

@@ -107,9 +107,6 @@ const renderConfig = {
 	}
 }
 
-// load-time defaults
-var aggregateField = renderConfig.FIELDS.COUNTRY
-
 //
 // normalize different representations 
 // of the same entity in the data
@@ -145,7 +142,7 @@ function cleanLocation(entry) {
 		entry['Country/Region'] = "Macau"
 	}
 
-	if (entry['Province/State'] == "Chicago") {
+	if (entry['Province/State'] == "Chicago" && !entry['County']) {
 		entry['Province/State'] = "Illinois"
 	}
 
@@ -159,7 +156,7 @@ function cleanLocation(entry) {
 	}
 
 	// more hacks
-	if (!entry['Province/State'] || entry['Province/State'] === undefined) {
+	if (!entry['County'] && !entry['Province/State'] || entry['Province/State'] === undefined) {
 		entry['Province/State'] = entry['Country/Region']
 	}
 
@@ -197,9 +194,14 @@ router.get('/', function(req, res, next) {
 router.get('/data/', function(req, res, next) {
 
 	let countryFilter = req.query['country']
+	let stateFilter = req.query['state']
 	var locationList = req.query['location']
 
 	// aggregate counts per location
+	let aggregateField = renderConfig.FIELDS.COUNTRY
+	if (stateFilter) {
+		aggregateField = renderConfig.FIELDS.COUNTY
+	}
 
 	let counts = {
 		"Confirmed": {},
@@ -213,18 +215,36 @@ router.get('/data/', function(req, res, next) {
 		let entries = data[i]['entries']
 		for (let j=0; j<entries.length; j++) {
 
-			// only show JHU data (disabled atm)			
-			// if (entries[j]['Source'] != "jhu") {	
+			// show new york times data for US states		
+			if (!stateFilter) {
+				if (entries[j]['Source'] != "jhu") {	
+					continue
+				}
+			} else if (countryFilter == "US" && stateFilter) {
+				if (entries[j]['Source'] != "nytimes") {	
+					continue
+				}
+			}
+
+			// if (!entries[j]['County']) {
 			// 	continue
 			// }
 
 			let location = getLocation(entries[j], aggregateField)
 
-			if (countryFilter) {
+			if (countryFilter) {				// filter out all except for selected country / state 
 				 if (getLocation(entries[j], renderConfig.FIELDS.COUNTRY) != countryFilter) {
-					continue	// not matching the requested country - skip
-				 } else {		// country selected - aggregate by state
-				 	location = getLocation(entries[j], renderConfig.FIELDS.STATE) 
+					continue	
+				 } else {		
+				 	if (stateFilter) {
+				 		if (getLocation(entries[j], renderConfig.FIELDS.STATE) != stateFilter) {
+							continue
+						} else {
+							location = getLocation(entries[j], renderConfig.FIELDS.COUNTY) 
+						}
+				 	} else {
+					 	location = getLocation(entries[j], renderConfig.FIELDS.STATE) 
+					 }
 				 }
 			}
 
@@ -232,6 +252,7 @@ router.get('/data/', function(req, res, next) {
 				continue
 			}
 
+			// lazy counter init
 			if (!counts["Confirmed"][location]) {
 				for (let key in counts) {
 					counts[key][location] = new Array(data.length).fill(0);
