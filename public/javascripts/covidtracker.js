@@ -2,25 +2,6 @@
 // Interactive grid rendering of the JHU CSSE data
 //
 
-import { getCovidData } from './covid-data.js'
-
-const exclusionList = ["Others", "null", "undefined", "None", "Unassigned Location (From Diamond Princess)", 
-						"Unassigned Location (From Diamond Princess)", "Recovered", "Grand Princess Cruise Ship",
-						"Wuhan Evacuee", "Grand Princess", "Diamond Princess" ]
-
-// for data consistency - no politics
-const countrySynonyms = {
-	"Mainland China" : "China",
-	"United Kingdom" : "UK",
-	"Korea, South" : "South Korea",
-	"Taiwan*" : "Taiwan",
-	"Iran (Islamic Republic of)": "Iran",
-	"Taipei and environs": "Taiwan",
-	"occupied Palestinian territory": "Israel",
-	"Viet Nam": "Vietnam",
-	"Russian Federation": "Russia"
-}
-
 const renderConfig = {
 	TYPE: {
 		TOTAL: "Total",
@@ -48,86 +29,6 @@ var renderType = renderConfig.TYPE.DELTA
 var renderVariable = renderConfig.VARIABLE.CONFIRMED
 var aggregateField = renderConfig.FIELDS.COUNTRY
 var sortCriteria = renderConfig.SORT.TIME
-
-//
-// normalize different representations 
-// of the same entity in the data
-//
-function normalize(entry) {
-	if (countrySynonyms[entry]) {
-		return countrySynonyms[entry]
-	} else {
-		return entry
-	}
-}
-
-//
-// patch up records based on inconsistencies
-// occuring in the data over time
-//
-function cleanLocation(entry) {
-
-	// march 23 format change hack
-	if (entry['Country_Region']) {		
-		entry['Country/Region'] = entry['Country_Region']
-	}
-
-	if (entry['Province_State']) {		
-		entry['Province/State'] = entry['Province_State']
-	}
-
-	// consistency hacks / no politics
-	if (entry['Province/State'] == "Hong Kong") {
-		entry['Country/Region'] = "Hong Kong"
-	}
-	if (entry['Province/State'] == "Macau") {
-		entry['Country/Region'] = "Macau"
-	}
-
-	if (entry['Province/State'] == "Chicago") {
-		entry['Province/State'] = "Illinois"
-	}
-
-	if (entry['Province/State'] == "District Of Columbia") {
-		entry['Province/State'] = "District of Columbia"
-	}
-
-	// weird records should be ignored
-	if (entry['Province/State'] == "US") {
-		entry['Province/State'] = "None"
-	}
-
-	// more hacks
-	if (!entry['Province/State'] || entry['Province/State'] === undefined) {
-		entry['Province/State'] = entry['Country/Region']
-	}
-
-	// us [ city, state ] format hack
-
-	if (entry['Country/Region'] == "US" && entry['Province/State'].indexOf(",") > 0) {
-		var state = entry['Province/State'].split(",")[1]
-		state = state.replace("(From Diamond Princess)","").replace(/\./g, '').trim()
-		if (usStateMapping[state]) {
-			entry['Province/State'] = usStateMapping[state]
-		} else {
-			entry['Province/State'] = entry['Province/State'].split(",")[0]
-		}
-	}
-
-	return entry
-
-}
-
-
-//
-// get location for a given entry
-// (warning: CSSE data is messy/inconsistent - hacks are needed)
-//
-function getLocation(entry, key) {
-	entry = cleanLocation(entry)
-	return normalize(entry[key])
-}
-
 
 //
 // get color corresponding to the given intensity value
@@ -340,14 +241,15 @@ function updateFilters() {
 //
 $(document).ready(function() {
 
-	let data = getCovidData()
-
 	let searchParams = new URLSearchParams(window.location.search)
 	let countryFilter = null
 	var locationList = null
 
+	var queryFilters = []
+
 	if (searchParams.has("country")) {
 		countryFilter = searchParams.get("country")
+		queryFilters.push("country=" + countryFilter)
 		$("#filter-container").html(countryFilter + ' Only' + '<a href="/">Remove Filter</a>')
 	}
 
@@ -361,101 +263,60 @@ $(document).ready(function() {
 
 	updateFilters()
 
-	// init the container grid
+	var queryParams = (queryFilters.length > 0) ? "?" + queryFilters.join("&") : ""
 
-	let xmax = window.innerWidth
-	let cellIncrement = 80/(data.length*1.3)
-	let gridWidth = (data.length*cellIncrement/100)*xmax + 4*(data.length-1) - 20
-	let labelSpace = (xmax - gridWidth)*0.9
+	$.get("/data" + queryParams, function( results ) {			
 
-	let grid = $("<div>").attr('id', 'grid')
-	grid.css({"grid-template-columns": "repeat(" + data.length + ", "  + cellIncrement + "%) " + labelSpace + "px"})
-	$("#grid-container").append(grid)
+		let counts = results["counts"]
+		let data = results["data"]
 
+		let xmax = window.innerWidth
+		let cellIncrement = 80/(data.length*1.3)
+		let gridWidth = (data.length*cellIncrement/100)*xmax + 4*(data.length-1) - 20
+		let labelSpace = (xmax - gridWidth)*0.9
 
-	// aggregate counts per location
+		let grid = $("<div>").attr('id', 'grid')
+		grid.css({"grid-template-columns": "repeat(" + data.length + ", "  + cellIncrement + "%) " + labelSpace + "px"})
+		$("#grid-container").append(grid)
 
-	let counts = {
-		"Confirmed": {},
-		"Active": {},
-		"Deaths": {},
-		"Recovered": {}
-	}
-
-	for (let i=0; i<data.length; i++) {
-		let date = data[i]['date']
-		let entries = data[i]['entries']
-		for (let j=0; j<entries.length; j++) {
-
-			// only show JHU data (disabled atm)			
-			// if (entries[j]['Source'] != "jhu") {	
-			// 	continue
-			// }
-
-			let location = getLocation(entries[j], aggregateField)
-
-			if (countryFilter) {
-				 if (getLocation(entries[j], renderConfig.FIELDS.COUNTRY) != countryFilter) {
-					continue	// not matching the requested country - skip
-				 } else {		// country selected - aggregate by state
-				 	location = getLocation(entries[j], renderConfig.FIELDS.STATE) 
-				 }
-			}
-
-			if (exclusionList.includes(location)) {
-				continue
-			}
-
-			if (!counts["Confirmed"][location]) {
-				for (let key in counts) {
-					counts[key][location] = new Array(data.length).fill(0);
-				}
-			}
-
-			for (let key in counts) {
-				if (entries[j][key]) {
-					counts[key][location][i] += parseInt(entries[j][key])
-				}
-			}
-		}
-	}
-
-	// render the grid
-	renderGrid(data, counts, gridWidth)
-
-	// add filter toggles
-
-	$("#type-select").click(function() {
-		let avail = Object.values(renderConfig.TYPE)
-		
-		renderType = avail[(avail.indexOf(renderType) + 1)%avail.length]
-		searchParams.set("type", renderType)
-		window.history.pushState('', '', '?' + searchParams)
-
+		// render the grid
 		renderGrid(data, counts, gridWidth)
-		updateFilters()
-	})
 
-	$("#variable-select").click(function() {
-		let avail = Object.values(renderConfig.VARIABLE)
-		
-		renderVariable = avail[(avail.indexOf(renderVariable) + 1)%avail.length]
-		searchParams.set("variable", renderVariable)
-		window.history.pushState('', '', '?' + searchParams)
+		// add filter toggles
 
-		renderGrid(data, counts, gridWidth)
-		updateFilters()
-	})
+		$("#type-select").click(function() {
+			let avail = Object.values(renderConfig.TYPE)
+			
+			renderType = avail[(avail.indexOf(renderType) + 1)%avail.length]
+			searchParams.set("type", renderType)
+			window.history.pushState('', '', '?' + searchParams)
 
-	$("#sort-select").click(function() {
-		let avail = Object.values(renderConfig.SORT)
-		
-		sortCriteria = avail[(avail.indexOf(sortCriteria) + 1)%avail.length]
-		searchParams.set("sort", sortCriteria)
-		window.history.pushState('', '', '?' + searchParams)
+			renderGrid(data, counts, gridWidth)
+			updateFilters()
+		})
 
-		renderGrid(data, counts, gridWidth)
-		updateFilters()
+		$("#variable-select").click(function() {
+			let avail = Object.values(renderConfig.VARIABLE)
+			
+			renderVariable = avail[(avail.indexOf(renderVariable) + 1)%avail.length]
+			searchParams.set("variable", renderVariable)
+			window.history.pushState('', '', '?' + searchParams)
+
+			renderGrid(data, counts, gridWidth)
+			updateFilters()
+		})
+
+		$("#sort-select").click(function() {
+			let avail = Object.values(renderConfig.SORT)
+			
+			sortCriteria = avail[(avail.indexOf(sortCriteria) + 1)%avail.length]
+			searchParams.set("sort", sortCriteria)
+			window.history.pushState('', '', '?' + searchParams)
+
+			renderGrid(data, counts, gridWidth)
+			updateFilters()
+		})
+
 	})
 
 })
