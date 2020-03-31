@@ -275,7 +275,8 @@ $(document).ready(function() {
 		let gridWidth = (data.length*cellIncrement/100)*xmax + 4*(data.length-1) - 20
 		let labelSpace = (xmax - gridWidth)*0.9
 
-		let grid = $("<div>").attr('id', 'grid')
+		// let grid = $("<div>").attr('id', 'grid')
+		let grid = $("#grid")
 		grid.css({"grid-template-columns": "repeat(" + data.length + ", "  + cellIncrement + "%) " + labelSpace + "px"})
 		$("#grid-container").append(grid)
 
