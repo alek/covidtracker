@@ -317,6 +317,10 @@ $(document).ready(function() {
 		renderVariable = searchParams.get("variable")
 	}
 
+	if (searchParams.has("sort")) {
+		sortCriteria = searchParams.get("sort")
+	}
+
 	updateFilters()
 
 	var queryParams = (queryFilters.length > 0) ? "?" + queryFilters.join("&") : ""
