@@ -5,7 +5,7 @@ var data = require('../public/javascripts/covid-data.js');
 // render exclusion list
 const exclusionList = ["Others", "null", "undefined", "None", "Unassigned Location (From Diamond Princess)", 
 						"Unassigned Location (From Diamond Princess)", "Recovered", "Grand Princess Cruise Ship",
-						"Wuhan Evacuee", "Grand Princess", "Diamond Princess" ]
+						"Wuhan Evacuee", "Grand Princess", "Diamond Princess", "Cruise Ship" ]
 
 // for data consistency - no politics
 const countrySynonyms = {
