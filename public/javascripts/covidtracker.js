@@ -266,7 +266,7 @@ function renderGrid(data, counts, gridWidth, start, end) {
 					getCount(counts["Confirmed"], index), 
 					getCount(counts["Deaths"], index),
 					getCount(counts["Recovered"], index),
-					data[index]["date"], 
+					data[index] ? data[index]["date"] : "", 
 					delta,
 					getColor(delta))	
 
