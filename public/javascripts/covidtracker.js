@@ -171,7 +171,7 @@ function renderGrid(data, counts, gridWidth, start, end) {
 					metric = counts[renderVariable][location][i]
 			}
 
-			radius = Math.min(Math.ceil(1+metric/50),8) + "px"
+			radius = Math.min(Math.ceil(1+metric/50),7) + "px"
 
 			let entry = $("<div>").addClass("grid-entry").attr("index",i).attr("location",location)
 			entry.css({"width": radius, "height": radius, "background-color": getColor(metric)})
@@ -331,8 +331,8 @@ $(document).ready(function() {
 		let data = results["data"]
 
 		let xmax = window.innerWidth
-		let cellIncrement = 80/(data.length*1.3)
-		let gridWidth = (data.length*cellIncrement/100)*xmax + 4*(data.length-1) - 20
+		let cellIncrement = 70/(data.length*1.3)
+		let gridWidth = (data.length*cellIncrement/100)*xmax + 4*(data.length-1)
 		let labelSpace = (xmax - gridWidth)*0.9
 
 		// let grid = $("<div>").attr('id', 'grid')
