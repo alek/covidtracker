@@ -331,7 +331,7 @@ $(document).ready(function() {
 		let data = results["data"]
 
 		let xmax = window.innerWidth
-		let cellIncrement = 70/(data.length*1.3)
+		let cellIncrement = 55/(data.length*1.3)
 		let gridWidth = (data.length*cellIncrement/100)*xmax + 4*(data.length-1)
 		let labelSpace = (xmax - gridWidth)*0.9
 
